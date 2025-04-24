@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import { BottomNav } from "./components/BottomNav";
 
 // Pages
 import Index from "./pages/Index";
@@ -15,6 +16,8 @@ import Categories from "./pages/Categories";
 import Trending from "./pages/Trending";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
+import LiveTV from "./pages/LiveTV";
+import Shorts from "./pages/Shorts";
 
 const queryClient = new QueryClient();
 
@@ -25,16 +28,21 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/premium" element={<Premium />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/trending" element={<Trending />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="pb-[60px] md:pb-0"> {/* Add padding for bottom navigation */}
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/premium" element={<Premium />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/trending" element={<Trending />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
+              <Route path="/live-tv" element={<LiveTV />} />
+              <Route path="/shorts" element={<Shorts />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <BottomNav />
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Menu, User } from "lucide-react";
+import { Search, Menu, User, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,10 @@ export function Navbar() {
 
           <nav className="hidden md:flex items-center space-x-4 text-white">
             <Link to="/" className="px-3 py-2 hover:text-jiohighlight transition-colors">Home</Link>
+            <Link to="/live-tv" className="px-3 py-2 hover:text-jiohighlight transition-colors flex items-center gap-1">
+              <Tv className="h-4 w-4" />
+              Live TV
+            </Link>
             <Link to="/trending" className="px-3 py-2 hover:text-jiohighlight transition-colors">Trending</Link>
             <Link to="/categories" className="px-3 py-2 hover:text-jiohighlight transition-colors">Categories</Link>
             <Link to="/premium" className="px-3 py-2 hover:text-jiohighlight transition-colors">Premium</Link>
@@ -61,6 +65,14 @@ export function Navbar() {
             onClick={toggleMenu}
           >
             Home
+          </Link>
+          <Link 
+            to="/live-tv" 
+            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
+            onClick={toggleMenu}
+          >
+            <Tv className="h-4 w-4" />
+            Live TV
           </Link>
           <Link 
             to="/trending" 
