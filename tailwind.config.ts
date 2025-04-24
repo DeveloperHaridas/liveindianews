@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,23 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        jioblue: {
+          DEFAULT: '#1A1F2C',
+          light: '#273042'
+        },
+        jiohighlight: {
+          DEFAULT: '#0EA5E9',
+          light: '#38BDF8'
+        },
+        jiocategory: {
+          business: '#F97316',
+          sports: '#22C55E',
+          entertainment: '#D946EF',
+          technology: '#3B82F6',
+          health: '#EC4899',
+          science: '#8B5CF6'
+        }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +101,22 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+        'fade-in': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(10px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out',
 			}
 		}
 	},
