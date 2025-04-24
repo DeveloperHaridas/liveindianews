@@ -1,4 +1,3 @@
-
 const news = [
   {
     id: "1",
@@ -89,6 +88,51 @@ const news = [
     imageUrl: "https://images.unsplash.com/photo-1569163139599-0f4518e6b423?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1557&q=80",
     isPremium: true,
     date: "2023-10-16"
+  },
+  {
+    id: "10",
+    headline: "New Education Policy Transforms Learning Landscape",
+    summary: "Revolutionary changes in education system with focus on skill development",
+    category: "Education",
+    imageUrl: "https://images.unsplash.com/photo-1523580494863-6f3031224c94",
+    isPremium: false,
+    date: "2023-10-15"
+  },
+  {
+    id: "11",
+    headline: "Mumbai Metro Expands Network to Suburbs",
+    summary: "New metro line connects western suburbs, reducing travel time significantly",
+    category: "City",
+    imageUrl: "https://images.unsplash.com/photo-1602928298849-325cec8771c0",
+    isPremium: false,
+    date: "2023-10-16"
+  },
+  {
+    id: "12",
+    headline: "Wellness Trends: Mindfulness in Daily Life",
+    summary: "How incorporating mindfulness practices can improve daily well-being",
+    category: "Lifestyle",
+    imageUrl: "https://images.unsplash.com/photo-1545205597-3d9d02c29597",
+    isPremium: false,
+    date: "2023-10-14"
+  },
+  {
+    id: "13",
+    headline: "Breaking: Major Political Development in Delhi",
+    summary: "Key policy changes announced affecting the capital region",
+    category: "India",
+    imageUrl: "https://images.unsplash.com/photo-1532375810709-75b1da00537c",
+    isPremium: true,
+    date: "2023-10-13"
+  },
+  {
+    id: "14",
+    headline: "Global Climate Summit Reaches New Accord",
+    summary: "World leaders agree on ambitious climate action goals",
+    category: "World",
+    imageUrl: "https://images.unsplash.com/photo-1532375810709-75b1da00537c",
+    isPremium: false,
+    date: "2023-10-12"
   }
 ];
 

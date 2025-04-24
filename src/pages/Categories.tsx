@@ -4,38 +4,68 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building } from "lucide-react";
 import news from "@/data/newsData";
 import { cn } from "@/lib/utils";
 
 const Categories = () => {
-  const [activeCategory, setActiveCategory] = useState("Business");
+  const [activeCategory, setActiveCategory] = useState("Latest");
+  
+  const categoryIcons = {
+    Education: Book,
+    Health: Heart,
+    Latest: Zap,
+    India: Flag,
+    World: Globe,
+    Lifestyle: Leaf,
+    "Web Stories": Newspaper,
+    City: Building,
+  };
   
   // Get unique categories
-  const categories = Array.from(new Set(news.map(item => item.category)));
+  const categories = [
+    "Latest",
+    "India",
+    "World",
+    "Education",
+    "Health",
+    "Lifestyle",
+    "City",
+    "Web Stories",
+    ...Array.from(new Set(news.map(item => item.category))).filter(cat => 
+      !["Latest", "India", "World", "Education", "Health", "Lifestyle", "City", "Web Stories"].includes(cat)
+    )
+  ];
   
   // Filter news by active category
-  const filteredNews = news.filter(item => item.category === activeCategory);
+  const filteredNews = activeCategory === "Latest" 
+    ? news.slice(0, 10) 
+    : news.filter(item => item.category === activeCategory);
   
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
-      case 'business': return 'bg-jiocategory-business';
-      case 'sports': return 'bg-jiocategory-sports';
-      case 'entertainment': return 'bg-jiocategory-entertainment';
-      case 'technology': return 'bg-jiocategory-technology';
-      case 'health': return 'bg-jiocategory-health';
-      case 'science': return 'bg-jiocategory-science';
+      case 'education': return 'bg-blue-500';
+      case 'health': return 'bg-red-500';
+      case 'latest': return 'bg-yellow-500';
+      case 'india': return 'bg-orange-500';
+      case 'world': return 'bg-purple-500';
+      case 'lifestyle': return 'bg-green-500';
+      case 'web stories': return 'bg-pink-500';
+      case 'city': return 'bg-indigo-500';
       default: return 'bg-gray-500';
     }
   };
   
   const getCategoryHoverColor = (category: string): string => {
     switch(category.toLowerCase()) {
-      case 'business': return 'hover:bg-jiocategory-business hover:text-white';
-      case 'sports': return 'hover:bg-jiocategory-sports hover:text-white';
-      case 'entertainment': return 'hover:bg-jiocategory-entertainment hover:text-white';
-      case 'technology': return 'hover:bg-jiocategory-technology hover:text-white';
-      case 'health': return 'hover:bg-jiocategory-health hover:text-white';
-      case 'science': return 'hover:bg-jiocategory-science hover:text-white';
+      case 'education': return 'hover:bg-blue-500 hover:text-white';
+      case 'health': return 'hover:bg-red-500 hover:text-white';
+      case 'latest': return 'hover:bg-yellow-500 hover:text-white';
+      case 'india': return 'hover:bg-orange-500 hover:text-white';
+      case 'world': return 'hover:bg-purple-500 hover:text-white';
+      case 'lifestyle': return 'hover:bg-green-500 hover:text-white';
+      case 'web stories': return 'hover:bg-pink-500 hover:text-white';
+      case 'city': return 'hover:bg-indigo-500 hover:text-white';
       default: return 'hover:bg-gray-500 hover:text-white';
     }
   };
@@ -49,28 +79,32 @@ const Categories = () => {
         
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={cn(
-                "px-4 py-2 rounded-full transition-colors",
-                getCategoryHoverColor(category),
-                activeCategory === category 
-                  ? `${getCategoryColor(category)} text-white` 
-                  : "bg-gray-100"
-              )}
-            >
-              {category}
-            </button>
-          ))}
+          {categories.map(category => {
+            const IconComponent = categoryIcons[category as keyof typeof categoryIcons];
+            return (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={cn(
+                  "px-4 py-2 rounded-full transition-colors flex items-center gap-2",
+                  getCategoryHoverColor(category),
+                  activeCategory === category 
+                    ? `${getCategoryColor(category)} text-white` 
+                    : "bg-gray-100"
+                )}
+              >
+                {IconComponent && <IconComponent className="w-4 h-4" />}
+                {category}
+              </button>
+            );
+          })}
         </div>
         
         {/* Category Banner */}
         <div className={`${getCategoryColor(activeCategory)} rounded-lg p-6 mb-8 text-white`}>
           <h2 className="text-2xl font-bold">{activeCategory} News</h2>
           <p className="opacity-80">
-            Latest updates and top stories from the world of {activeCategory.toLowerCase()}
+            Latest updates and top stories from {activeCategory.toLowerCase()}
           </p>
         </div>
         
