@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Menu, User, Tv } from "lucide-react";
@@ -21,7 +20,7 @@ export function Navbar() {
               <Menu className="h-6 w-6 text-white" />
             </Button>
             <Link to="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-white">Jio</span>
+              <span className="text-2xl font-bold text-white">Live India</span>
               <span className="text-2xl font-bold text-jiohighlight">News</span>
             </Link>
           </div>
@@ -53,7 +52,6 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile menu */}
       <div className={cn(
         "md:hidden bg-jioblue-light absolute w-full transition-all duration-300 ease-in-out",
         isMenuOpen ? "max-h-64 py-2" : "max-h-0 py-0 overflow-hidden"
