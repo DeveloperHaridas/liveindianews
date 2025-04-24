@@ -36,17 +36,7 @@ const LiveTV = () => {
         </div>
       ) : (
         <>
-          <div className="bg-red-700 text-white py-4 px-4 flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-white mr-2"
-              onClick={() => navigate("/")}
-            >
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-            <h1 className="text-xl font-medium">Live TV</h1>
-          </div>
+          <Navbar />
           
           <main className="flex-grow container mx-auto px-4 py-6">
             <h2 className="text-2xl font-bold mb-6">Browse by channels</h2>

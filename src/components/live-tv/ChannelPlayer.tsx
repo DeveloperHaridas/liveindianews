@@ -4,6 +4,11 @@ import { channels } from "@/data/channelsData";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Share2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { 
+  Drawer,
+  DrawerContent,
+  DrawerTrigger
+} from "@/components/ui/drawer";
 
 interface ChannelPlayerProps {
   channelId: string;
@@ -27,12 +32,15 @@ export function ChannelPlayer({ channelId }: ChannelPlayerProps) {
   return (
     <div className="bg-black w-full">
       <div className="aspect-video max-w-4xl mx-auto">
+        {/* Use an iframe with allow="autoplay" to ensure videos can play properly */}
         <iframe 
           src={channel.streamUrl}
           title={`${channel.name} live stream`}
           className="w-full h-full"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowFullScreen
+          frameBorder="0"
+          loading="eager"
         />
       </div>
       <div className="bg-white p-4 border-b">
@@ -49,14 +57,18 @@ export function ChannelPlayer({ channelId }: ChannelPlayerProps) {
                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
               </svg>
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setShowChatOnMobile(!showChatOnMobile)}
-            >
-              <MessageSquare />
-            </Button>
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <MessageSquare />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="p-4 h-[80vh]">
+                  <LiveChat channelId={channelId} />
+                </div>
+              </DrawerContent>
+            </Drawer>
             <Button variant="ghost" size="icon" onClick={handleShare}>
               <Share2 />
             </Button>
