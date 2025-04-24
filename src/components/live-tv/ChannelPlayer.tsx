@@ -9,6 +9,7 @@ import {
   DrawerContent,
   DrawerTrigger
 } from "@/components/ui/drawer";
+import { LiveChat } from "@/components/live-tv/LiveChat"; // Add this import to fix the error
 
 interface ChannelPlayerProps {
   channelId: string;
