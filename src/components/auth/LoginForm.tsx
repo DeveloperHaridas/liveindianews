@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Facebook, Google } from "lucide-react";
+import { Mail, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ export function LoginForm() {
     
     // Simulate login
     setTimeout(() => {
-      localStorage.setItem("authenticated", "true");
+      login();
       toast({
         title: "Success!",
         description: "You have been logged in successfully.",
@@ -37,8 +39,7 @@ export function LoginForm() {
     
     // Simulate social login
     setTimeout(() => {
-      localStorage.setItem("authenticated", "true");
-      localStorage.setItem("provider", provider);
+      login(provider);
       toast({
         title: "Success!",
         description: `You have been logged in with ${provider} successfully.`,
@@ -106,7 +107,7 @@ export function LoginForm() {
             disabled={isLoading}
             className="flex items-center gap-2"
           >
-            <Google className="h-4 w-4" />
+            <Mail className="h-4 w-4" />
             Google
           </Button>
           <Button 
@@ -115,7 +116,7 @@ export function LoginForm() {
             disabled={isLoading}
             className="flex items-center gap-2"
           >
-            <Facebook className="h-4 w-4" />
+            <Share2 className="h-4 w-4" />
             Facebook
           </Button>
         </div>
