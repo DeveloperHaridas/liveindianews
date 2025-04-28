@@ -26,9 +26,12 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true);
     setError("");
     
+    console.log("Attempting admin login with:", { username, password: "******" });
+    
     // This is a simple admin authentication
     // In a real app, you should use a secure authentication method
     if (username === "admin" && password === "admin123") {
+      console.log("Admin credentials match");
       // Explicitly set to true for admin login
       login(undefined, true);
       

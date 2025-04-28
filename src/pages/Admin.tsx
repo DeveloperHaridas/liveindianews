@@ -17,9 +17,13 @@ const Admin = () => {
   useEffect(() => {
     // Check if user is logged in as admin
     const adminStatus = checkAdminStatus();
+    console.log("Admin status check:", { isAuthenticated, adminStatus });
     
     if (isAuthenticated && adminStatus) {
       setIsAdminAuthenticated(true);
+    } else if (isAuthenticated && !adminStatus) {
+      // User is authenticated but not as admin
+      setIsAdminAuthenticated(false);
     } else if (!isAuthenticated) {
       toast({
         title: "Authentication required",
@@ -31,12 +35,13 @@ const Admin = () => {
   }, [isAuthenticated, navigate, checkAdminStatus, toast]);
   
   const handleAdminLogin = () => {
+    console.log("Admin login successful");
     setIsAdminAuthenticated(true);
   };
   
   const handleAdminLogout = () => {
+    console.log("Admin logout");
     setIsAdminAuthenticated(false);
-    navigate("/");
   };
   
   return (
