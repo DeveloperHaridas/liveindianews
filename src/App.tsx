@@ -18,6 +18,7 @@ import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
 import LiveTV from "./pages/LiveTV";
 import Shorts from "./pages/Shorts";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/live-tv" element={<LiveTV />} />
               <Route path="/shorts" element={<Shorts />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <BottomNav />
