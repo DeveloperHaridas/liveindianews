@@ -29,11 +29,8 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     // This is a simple admin authentication
     // In a real app, you should use a secure authentication method
     if (username === "admin" && password === "admin123") {
-      // Set admin status
-      localStorage.setItem("isAdmin", "true");
-      
-      // Also authenticate through the normal auth system
-      login();
+      // Use the login function with asAdmin=true
+      login(undefined, true);
       
       toast({
         title: "Admin Login Successful",

@@ -4,7 +4,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from "react
 interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
-  login: (provider?: string) => void;
+  login: (provider?: string, asAdmin?: boolean) => void;
   logout: () => void;
   checkAdminStatus: () => boolean;
 }
@@ -33,11 +33,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return adminStatus === "true";
   };
   
-  const login = (provider?: string) => {
+  const login = (provider?: string, asAdmin?: boolean) => {
     localStorage.setItem("authenticated", "true");
     if (provider) {
       localStorage.setItem("provider", provider);
     }
+    
+    if (asAdmin) {
+      localStorage.setItem("isAdmin", "true");
+      setIsAdmin(true);
+    }
+    
     setIsAuthenticated(true);
   };
   
