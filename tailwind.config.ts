@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -69,7 +68,8 @@ export default {
         },
         jiohighlight: {
           DEFAULT: '#0EA5E9',
-          light: '#38BDF8'
+          light: '#38BDF8',
+          dark: '#0284C7'
         },
         jiocategory: {
           business: '#F97316',
@@ -78,6 +78,11 @@ export default {
           technology: '#3B82F6',
           health: '#EC4899',
           science: '#8B5CF6'
+        },
+        premium: {
+          gold: '#FFD700',
+          silver: '#C0C0C0',
+          bronze: '#CD7F32'
         }
 			},
 			borderRadius: {
@@ -117,6 +122,12 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.3s ease-out',
+			},
+			boxShadow: {
+				'premium': '0 4px 20px -2px rgba(14, 165, 233, 0.15)',
+			},
+			backgroundImage: {
+				'gradient-premium': 'linear-gradient(to right, #0EA5E9, #2563EB)',
 			}
 		}
 	},

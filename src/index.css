@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -82,17 +81,26 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    @apply bg-gradient-to-br from-gray-50 to-gray-100;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
 
 @layer components {
   .news-card {
-    @apply overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg;
+    @apply overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-jiohighlight/10 backdrop-blur-sm bg-white/80 border border-gray-100;
   }
   
   .category-badge {
-    @apply text-xs font-medium px-2 py-1 rounded-full text-white;
+    @apply text-xs font-medium px-2 py-1 rounded-full text-white shadow-sm;
+  }
+
+  .premium-card {
+    @apply bg-gradient-to-br from-white to-gray-50 shadow-xl shadow-jiohighlight/10 border border-gray-100;
+  }
+
+  .premium-button {
+    @apply bg-gradient-to-r from-jiohighlight to-blue-600 text-white font-medium px-4 py-2 rounded-full 
+           hover:shadow-lg hover:shadow-jiohighlight/20 transition-all duration-300;
   }
 }
