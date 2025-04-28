@@ -19,8 +19,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const auth = localStorage.getItem("authenticated");
     const adminStatus = localStorage.getItem("isAdmin");
     
-    console.log("Auth provider init:", { auth, adminStatus });
-    
     if (auth === "true") {
       setIsAuthenticated(true);
     }
@@ -32,19 +30,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const checkAdminStatus = (): boolean => {
     const adminStatus = localStorage.getItem("isAdmin");
-    console.log("Checking admin status:", adminStatus);
     return adminStatus === "true";
   };
   
   const login = (provider?: string, asAdmin?: boolean) => {
-    console.log("Login called with:", { provider, asAdmin });
     localStorage.setItem("authenticated", "true");
     if (provider) {
       localStorage.setItem("provider", provider);
     }
     
     if (asAdmin) {
-      console.log("Setting admin status to true");
       localStorage.setItem("isAdmin", "true");
       setIsAdmin(true);
     }
@@ -53,7 +48,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const logout = () => {
-    console.log("Logout called");
     localStorage.removeItem("authenticated");
     localStorage.removeItem("provider");
     localStorage.removeItem("isAdmin");
