@@ -29,7 +29,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     // This is a simple admin authentication
     // In a real app, you should use a secure authentication method
     if (username === "admin" && password === "admin123") {
-      // Use the login function with asAdmin=true
+      // Explicitly set to true for admin login
       login(undefined, true);
       
       toast({

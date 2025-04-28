@@ -11,6 +11,7 @@ import { LiveStreamManagement } from "@/components/admin/LiveStreamManagement";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -19,13 +20,17 @@ interface AdminDashboardProps {
 export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState("news");
   const { toast } = useToast();
+  const { logout } = useAuth();
   
   const handleLogout = () => {
-    localStorage.removeItem("isAdmin");
+    // Use the auth logout function to clear authentication state
+    logout();
+    
     toast({
       title: "Logged out",
       description: "You have been logged out of the admin panel",
     });
+    
     onLogout();
   };
   

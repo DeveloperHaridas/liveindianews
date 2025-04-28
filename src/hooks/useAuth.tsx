@@ -53,7 +53,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("isAdmin");
     setIsAuthenticated(false);
     setIsAdmin(false);
-    window.location.href = "/";
   };
   
   return (
