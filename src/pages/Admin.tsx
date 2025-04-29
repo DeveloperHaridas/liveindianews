@@ -6,19 +6,28 @@ import { Footer } from "@/components/Footer";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/components/ui/use-toast";
 
 const Admin = () => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin, checkAdminStatus } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   useEffect(() => {
     // Check if user is logged in as admin
-    const adminStatus = localStorage.getItem("isAdmin");
-    if (adminStatus === "true" && isAuthenticated) {
+    const adminStatus = checkAdminStatus();
+    
+    if (adminStatus && isAuthenticated) {
       setIsAdminAuthenticated(true);
+      toast({
+        title: "Admin Access",
+        description: "Welcome to the admin dashboard",
+      });
+    } else {
+      setIsAdminAuthenticated(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isAdmin, checkAdminStatus, toast]);
   
   return (
     <div className="flex flex-col min-h-screen">

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Tabs, 
   TabsContent, 
@@ -12,19 +12,34 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("news");
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  
+  // Load last active tab from localStorage
+  useEffect(() => {
+    const savedTab = localStorage.getItem("adminActiveTab");
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+  }, []);
+  
+  // Save active tab to localStorage when it changes
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    localStorage.setItem("adminActiveTab", newTab);
+  };
   
   const handleLogout = () => {
-    localStorage.removeItem("isAdmin");
+    logout(); // Use the logout function from auth context
     toast({
       title: "Logged out",
       description: "You have been logged out of the admin panel",
     });
-    navigate("/");
   };
   
   return (
@@ -41,7 +56,7 @@ export function AdminDashboard() {
         </Button>
       </div>
       
-      <Tabs defaultValue="news" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="news" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="grid grid-cols-2 w-[400px]">
           <TabsTrigger value="news">News Management</TabsTrigger>
           <TabsTrigger value="livestreams">Live Streams</TabsTrigger>

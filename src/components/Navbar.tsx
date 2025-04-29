@@ -1,25 +1,23 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, Menu, User, Tv, Lock } from "lucide-react";
+import { Search, Menu, User, Tv, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAuthenticated, isAdmin, checkAdminStatus } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   
   useEffect(() => {
-    // Check if user is an admin
-    const adminStatus = localStorage.getItem("isAdmin");
-    if (adminStatus === "true") {
-      setIsAdmin(true);
-    }
-  }, []);
+    // Check admin status when component mounts or authentication changes
+    checkAdminStatus();
+  }, [isAuthenticated, checkAdminStatus]);
   
   return (
     <header className="sticky top-0 z-50 w-full bg-jioblue shadow-md">
@@ -44,12 +42,15 @@ export function Navbar() {
             <Link to="/trending" className="px-3 py-2 hover:text-jiohighlight transition-colors">Trending</Link>
             <Link to="/categories" className="px-3 py-2 hover:text-jiohighlight transition-colors">Categories</Link>
             <Link to="/premium" className="px-3 py-2 hover:text-jiohighlight transition-colors">Premium</Link>
-            {isAdmin && (
-              <Link to="/admin" className="px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-1">
-                <Lock className="h-4 w-4" />
-                Admin
-              </Link>
-            )}
+            
+            {/* Admin Link - Always visible for quick access */}
+            <Link 
+              to="/admin" 
+              className="px-3 py-2 bg-jiohighlight hover:bg-opacity-80 text-white rounded-md flex items-center gap-1 transition-colors"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin
+            </Link>
           </nav>
 
           <div className="flex items-center space-x-2">
@@ -109,16 +110,16 @@ export function Navbar() {
           >
             Premium
           </Link>
-          {isAdmin && (
-            <Link 
-              to="/admin" 
-              className="block px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2"
-              onClick={toggleMenu}
-            >
-              <Lock className="h-4 w-4" />
-              Admin
-            </Link>
-          )}
+          
+          {/* Admin Link in mobile menu - Always visible */}
+          <Link 
+            to="/admin" 
+            className="block px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2"
+            onClick={toggleMenu}
+          >
+            <ShieldCheck className="h-4 w-4" />
+            Admin
+          </Link>
         </div>
       </div>
     </header>
