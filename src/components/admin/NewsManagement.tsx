@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -25,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Edit, Trash2, Upload } from "lucide-react";
 import news from "@/data/newsData";
 
 // Extract all unique categories from the news data
@@ -37,7 +36,7 @@ const availableCategories = Array.from(
 const sampleNews = news.slice(0, 5).map(item => ({
   id: Number(item.id),
   title: item.headline,
-  source: item.category, // Initially using category as source, will be changed by users
+  source: item.source || item.category, // Initially using category as source, will be changed by users
   category: item.category, 
   date: item.date,
   content: item.content || "",
@@ -253,6 +252,9 @@ interface NewsFormProps {
 
 function NewsForm({ onSubmit, isEditing, initialData, availableCategories }: NewsFormProps) {
   const [formData, setFormData] = useState(initialData);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(initialData.imageUrl || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -263,8 +265,26 @@ function NewsForm({ onSubmit, isEditing, initialData, availableCategories }: New
     setFormData({ ...formData, [name]: value });
   };
   
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setSelectedImage(file);
+      
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        // Update form data with the data URL for storage
+        setFormData({ ...formData, imageUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Submit with the current form data (which includes the image data URL)
     onSubmit(formData);
   };
   
@@ -338,15 +358,40 @@ function NewsForm({ onSubmit, isEditing, initialData, availableCategories }: New
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="imageUrl">Image URL</Label>
-          <Input
-            id="imageUrl"
-            name="imageUrl"
-            type="url"
-            value={formData.imageUrl || ""}
-            onChange={handleChange}
-            placeholder="https://example.com/image.jpg"
-          />
+          <Label htmlFor="imageInput">Image</Label>
+          <div className="flex items-center gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-4 w-4" />
+              Select Image
+            </Button>
+            <Input
+              ref={fileInputRef}
+              id="imageInput"
+              name="imageInput"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageSelect}
+            />
+            <span className="text-sm text-gray-500">
+              {selectedImage?.name || (imagePreview && !selectedImage ? "Current image" : "No image selected")}
+            </span>
+          </div>
+          
+          {imagePreview && (
+            <div className="mt-2">
+              <img 
+                src={imagePreview} 
+                alt="Preview" 
+                className="max-h-40 rounded-md object-cover"
+              />
+            </div>
+          )}
         </div>
         
         <div className="space-y-2">

@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -24,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { PlusCircle, Edit, Trash2, Video } from "lucide-react";
+import { PlusCircle, Edit, Trash2, Video, Upload } from "lucide-react";
 
 // Sample video news data
 const sampleVideoNews = [
@@ -268,10 +267,43 @@ interface VideoFormProps {
 
 function VideoForm({ onSubmit, isEditing, initialData }: VideoFormProps) {
   const [formData, setFormData] = useState(initialData);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(initialData.thumbnailUrl || null);
+  
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+  
+  const handleThumbnailSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setThumbnailFile(file);
+      
+      // Create a preview URL for the thumbnail
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result as string);
+        // Update formData with the data URL
+        setFormData({ ...formData, thumbnailUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setVideoFile(file);
+      
+      // For video, we'll use a data URL or a local blob URL
+      const videoUrl = URL.createObjectURL(file);
+      setFormData({ ...formData, videoUrl });
+    }
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -343,29 +375,67 @@ function VideoForm({ onSubmit, isEditing, initialData }: VideoFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="thumbnailUrl">Thumbnail URL</Label>
-          <Input
-            id="thumbnailUrl"
-            name="thumbnailUrl"
-            type="url"
-            value={formData.thumbnailUrl}
-            onChange={handleChange}
-            placeholder="https://example.com/thumbnail.jpg"
-            required
-          />
+          <Label htmlFor="thumbnailInput">Thumbnail</Label>
+          <div className="flex items-center gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => thumbnailInputRef.current?.click()}
+            >
+              <Upload className="h-4 w-4" />
+              Select Thumbnail
+            </Button>
+            <Input
+              ref={thumbnailInputRef}
+              id="thumbnailInput"
+              name="thumbnailInput"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleThumbnailSelect}
+            />
+            <span className="text-sm text-gray-500">
+              {thumbnailFile?.name || (thumbnailPreview && !thumbnailFile ? "Current thumbnail" : "No thumbnail selected")}
+            </span>
+          </div>
+          
+          {thumbnailPreview && (
+            <div className="mt-2">
+              <img 
+                src={thumbnailPreview} 
+                alt="Thumbnail Preview" 
+                className="max-h-40 rounded-md object-cover"
+              />
+            </div>
+          )}
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="videoUrl">Video URL</Label>
-          <Input
-            id="videoUrl"
-            name="videoUrl"
-            type="url"
-            value={formData.videoUrl}
-            onChange={handleChange}
-            placeholder="https://example.com/video.mp4"
-            required
-          />
+          <Label htmlFor="videoInput">Video</Label>
+          <div className="flex items-center gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => videoInputRef.current?.click()}
+            >
+              <Video className="h-4 w-4" />
+              Select Video
+            </Button>
+            <Input
+              ref={videoInputRef}
+              id="videoInput"
+              name="videoInput"
+              type="file"
+              accept="video/*"
+              className="hidden"
+              onChange={handleVideoSelect}
+            />
+            <span className="text-sm text-gray-500">
+              {videoFile?.name || (formData.videoUrl && !videoFile ? "Current video" : "No video selected")}
+            </span>
+          </div>
         </div>
         
         <div className="space-y-2">
