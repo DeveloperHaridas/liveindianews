@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -25,31 +25,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import news from "@/data/newsData";
 
 // Sample news data
-const sampleNews = [
-  { 
-    id: 1, 
-    title: "COVID-19 Cases Rising in Major Cities", 
-    source: "Times Health",
-    category: "Health", 
-    date: "2025-04-27"
-  },
-  { 
-    id: 2, 
-    title: "New Economic Policy Announced", 
-    source: "Business Standard",
-    category: "Business", 
-    date: "2025-04-26"
-  },
-  { 
-    id: 3, 
-    title: "National Cricket Team Wins Tournament", 
-    source: "Sports Today",
-    category: "Sports", 
-    date: "2025-04-25"
-  },
-];
+const sampleNews = news.slice(0, 5).map(item => ({
+  id: Number(item.id),
+  title: item.headline,
+  source: item.category,
+  category: item.category, 
+  date: item.date,
+  content: item.content || "",
+  imageUrl: item.imageUrl
+}));
 
 interface NewsItem {
   id: number;
@@ -62,10 +49,20 @@ interface NewsItem {
 }
 
 export function NewsManagement() {
-  const [newsItems, setNewsItems] = useState<NewsItem[]>(sampleNews);
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [currentNews, setCurrentNews] = useState<NewsItem | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+  
+  // Load news from localStorage or default
+  useEffect(() => {
+    const storedNews = localStorage.getItem("adminNewsData");
+    if (storedNews) {
+      setNewsItems(JSON.parse(storedNews));
+    } else {
+      setNewsItems(sampleNews);
+    }
+  }, []);
   
   const handleAddNews = (news: Omit<NewsItem, "id">) => {
     const newItem = {
@@ -73,7 +70,12 @@ export function NewsManagement() {
       id: newsItems.length ? Math.max(...newsItems.map(n => n.id)) + 1 : 1
     };
     
-    setNewsItems([...newsItems, newItem]);
+    const updatedNews = [...newsItems, newItem];
+    setNewsItems(updatedNews);
+    
+    // Store in localStorage
+    localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+    
     toast({
       title: "News Added",
       description: `"${news.title}" has been added successfully.`,
@@ -81,7 +83,12 @@ export function NewsManagement() {
   };
   
   const handleEditNews = (news: NewsItem) => {
-    setNewsItems(newsItems.map(item => item.id === news.id ? news : item));
+    const updatedNews = newsItems.map(item => item.id === news.id ? news : item);
+    setNewsItems(updatedNews);
+    
+    // Update localStorage
+    localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+    
     toast({
       title: "News Updated",
       description: `"${news.title}" has been updated successfully.`,
@@ -91,7 +98,12 @@ export function NewsManagement() {
   };
   
   const handleDeleteNews = (id: number) => {
-    setNewsItems(newsItems.filter(item => item.id !== id));
+    const updatedNews = newsItems.filter(item => item.id !== id);
+    setNewsItems(updatedNews);
+    
+    // Update localStorage
+    localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+    
     toast({
       title: "News Deleted",
       description: "The news item has been deleted successfully.",

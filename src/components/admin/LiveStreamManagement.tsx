@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -38,10 +37,20 @@ interface Channel {
 }
 
 export function LiveStreamManagement() {
-  const [liveStreams, setLiveStreams] = useState<Channel[]>(channels);
+  const [liveStreams, setLiveStreams] = useState<Channel[]>([]);
   const [currentStream, setCurrentStream] = useState<Channel | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+  
+  // Load channels from localStorage or default
+  useEffect(() => {
+    const storedStreams = localStorage.getItem("adminLiveStreams");
+    if (storedStreams) {
+      setLiveStreams(JSON.parse(storedStreams));
+    } else {
+      setLiveStreams(channels);
+    }
+  }, []);
   
   const handleAddStream = (stream: Omit<Channel, "id">) => {
     const newStream = {
@@ -49,7 +58,12 @@ export function LiveStreamManagement() {
       id: Date.now().toString(),
     };
     
-    setLiveStreams([...liveStreams, newStream]);
+    const updatedStreams = [...liveStreams, newStream];
+    setLiveStreams(updatedStreams);
+    
+    // Store in localStorage
+    localStorage.setItem("adminLiveStreams", JSON.stringify(updatedStreams));
+    
     toast({
       title: "Stream Added",
       description: `"${stream.name}" has been added successfully.`,
@@ -57,7 +71,12 @@ export function LiveStreamManagement() {
   };
   
   const handleEditStream = (stream: Channel) => {
-    setLiveStreams(liveStreams.map(item => item.id === stream.id ? stream : item));
+    const updatedStreams = liveStreams.map(item => item.id === stream.id ? stream : item);
+    setLiveStreams(updatedStreams);
+    
+    // Update localStorage
+    localStorage.setItem("adminLiveStreams", JSON.stringify(updatedStreams));
+    
     toast({
       title: "Stream Updated",
       description: `"${stream.name}" has been updated successfully.`,
@@ -67,7 +86,12 @@ export function LiveStreamManagement() {
   };
   
   const handleDeleteStream = (id: string) => {
-    setLiveStreams(liveStreams.filter(item => item.id !== id));
+    const updatedStreams = liveStreams.filter(item => item.id !== id);
+    setLiveStreams(updatedStreams);
+    
+    // Update localStorage
+    localStorage.setItem("adminLiveStreams", JSON.stringify(updatedStreams));
+    
     toast({
       title: "Stream Deleted",
       description: "The live stream has been deleted successfully.",

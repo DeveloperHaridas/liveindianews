@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LiveTVChannels } from "@/components/live-tv/LiveTVChannels";
@@ -8,10 +8,28 @@ import { LiveChat } from "@/components/live-tv/LiveChat";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { channels as defaultChannels } from "@/data/channelsData";
 
 const LiveTV = () => {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [adminChannels, setAdminChannels] = useState(defaultChannels);
+  
+  // Load channels from localStorage (set by admin panel)
+  useEffect(() => {
+    const loadChannels = () => {
+      const storedChannels = localStorage.getItem("adminLiveStreams");
+      if (storedChannels) {
+        setAdminChannels(JSON.parse(storedChannels));
+      }
+    };
+    
+    loadChannels();
+    
+    // Listen for storage changes (when admin updates channels)
+    window.addEventListener("storage", loadChannels);
+    return () => window.removeEventListener("storage", loadChannels);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -40,7 +58,10 @@ const LiveTV = () => {
           
           <main className="flex-grow container mx-auto px-4 py-6">
             <h2 className="text-2xl font-bold mb-6">Browse by channels</h2>
-            <LiveTVChannels onSelectChannel={setSelectedChannel} />
+            <LiveTVChannels 
+              onSelectChannel={setSelectedChannel} 
+              customChannels={adminChannels}
+            />
           </main>
           
           <Footer />

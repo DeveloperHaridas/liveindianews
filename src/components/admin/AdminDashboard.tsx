@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tabs";
 import { NewsManagement } from "@/components/admin/NewsManagement";
 import { LiveStreamManagement } from "@/components/admin/LiveStreamManagement";
+import { VideoNewsManagement } from "@/components/admin/VideoNewsManagement";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { LogOut } from "lucide-react";
@@ -57,15 +58,19 @@ export function AdminDashboard() {
       </div>
       
       <Tabs defaultValue="news" value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="grid grid-cols-2 w-[400px]">
+        <TabsList className="grid grid-cols-3 w-[600px]">
           <TabsTrigger value="news">News Management</TabsTrigger>
           <TabsTrigger value="livestreams">Live Streams</TabsTrigger>
+          <TabsTrigger value="videonews">Video News</TabsTrigger>
         </TabsList>
         <TabsContent value="news" className="mt-6">
           <NewsManagement />
         </TabsContent>
         <TabsContent value="livestreams" className="mt-6">
           <LiveStreamManagement />
+        </TabsContent>
+        <TabsContent value="videonews" className="mt-6">
+          <VideoNewsManagement />
         </TabsContent>
       </Tabs>
     </div>

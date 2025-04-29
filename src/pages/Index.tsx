@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsBanner } from "@/components/NewsBanner";
@@ -7,10 +7,52 @@ import { NewsCard } from "@/components/NewsCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { Crown } from "lucide-react";
-import news from "@/data/newsData";
+import defaultNews from "@/data/newsData";
+
+interface NewsItem {
+  id: string;
+  headline: string;
+  summary?: string;
+  content?: string;
+  category: string;
+  imageUrl: string;
+  isPremium?: boolean;
+  date: string;
+}
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [news, setNews] = useState<NewsItem[]>(defaultNews);
+  
+  // Load news from localStorage (set by admin panel)
+  useEffect(() => {
+    const loadNews = () => {
+      const adminNewsData = localStorage.getItem("adminNewsData");
+      
+      if (adminNewsData) {
+        // Convert admin news format to match the expected format
+        const adminNews = JSON.parse(adminNewsData).map((item: any) => ({
+          id: String(item.id),
+          headline: item.title,
+          summary: item.content?.substring(0, 120) + "...",
+          content: item.content,
+          category: item.category,
+          imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+          isPremium: false,
+          date: item.date
+        }));
+        
+        // Append admin news to default news or replace completely
+        setNews([...adminNews, ...defaultNews.filter(d => !adminNews.find((a: any) => a.id === d.id))]);
+      }
+    };
+    
+    loadNews();
+    
+    // Listen for storage changes (when admin updates news)
+    window.addEventListener("storage", loadNews);
+    return () => window.removeEventListener("storage", loadNews);
+  }, []);
 
   // Get the featured news (first article)
   const featuredNews = news[0];
