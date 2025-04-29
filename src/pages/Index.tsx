@@ -101,6 +101,7 @@ const Index = () => {
             category={featuredNews.category}
             imageUrl={featuredNews.imageUrl}
             id={featuredNews.id}
+            source={featuredNews.source}
           />
         </div>
 
@@ -124,6 +125,7 @@ const Index = () => {
               category={item.category}
               imageUrl={item.imageUrl}
               isPremium={item.isPremium}
+              source={item.source}
             />
           ))}
         </div>

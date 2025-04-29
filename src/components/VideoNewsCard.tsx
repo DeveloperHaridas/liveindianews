@@ -12,6 +12,7 @@ interface VideoNews {
   videoUrl: string;
   date: string;
   description?: string;
+  source?: string; // Adding source property
 }
 
 interface VideoNewsCardProps {
@@ -73,8 +74,9 @@ export function VideoNewsCard({ video }: VideoNewsCardProps) {
           {video.description && (
             <p className="text-gray-600 text-sm mb-3 line-clamp-2">{video.description}</p>
           )}
-          <div className="text-gray-400 text-xs">
-            {formatDate(video.date)}
+          <div className="flex justify-between items-center text-xs text-gray-400">
+            <span>{formatDate(video.date)}</span>
+            {video.source && <span className="font-medium">{video.source}</span>}
           </div>
         </div>
       </div>
@@ -94,6 +96,11 @@ export function VideoNewsCard({ video }: VideoNewsCardProps) {
           <div className="p-4 bg-white">
             <DialogTitle className="mb-2">{video.title}</DialogTitle>
             {video.description && <p className="text-gray-700 text-sm">{video.description}</p>}
+            {video.source && (
+              <div className="mt-2 text-sm font-medium text-gray-600">
+                Source: {video.source}
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

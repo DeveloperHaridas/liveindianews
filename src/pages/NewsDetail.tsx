@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -119,7 +118,13 @@ const NewsDetail = () => {
           </div>
           
           <h1 className="text-3xl font-bold mb-4">{article.headline}</h1>
-          <p className="text-gray-500 mb-6">Published on {new Date(article.date).toLocaleDateString()}</p>
+          
+          <div className="flex justify-between items-center mb-6 text-gray-500">
+            <span>Published on {new Date(article.date).toLocaleDateString()}</span>
+            {article.source && (
+              <span className="font-medium">{article.source}</span>
+            )}
+          </div>
           
           <img 
             src={article.imageUrl} 
@@ -151,6 +156,7 @@ const NewsDetail = () => {
                   category={item.category}
                   imageUrl={item.imageUrl}
                   isPremium={item.isPremium}
+                  source={item.source}
                 />
               ))}
             </div>

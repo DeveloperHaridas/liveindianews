@@ -34,7 +34,8 @@ const sampleVideoNews = [
     duration: "2:45",
     thumbnailUrl: "https://images.unsplash.com/photo-1554177255-61502b352de3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     videoUrl: "https://example.com/video1.mp4",
-    date: "2025-04-25"
+    date: "2025-04-25",
+    source: "JioNews"
   },
   { 
     id: "2", 
@@ -43,7 +44,8 @@ const sampleVideoNews = [
     duration: "3:12",
     thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     videoUrl: "https://example.com/video2.mp4",
-    date: "2025-04-24"
+    date: "2025-04-24",
+    source: "Tech Today"
   },
   { 
     id: "3", 
@@ -52,7 +54,8 @@ const sampleVideoNews = [
     duration: "1:58",
     thumbnailUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     videoUrl: "https://example.com/video3.mp4",
-    date: "2025-04-23"
+    date: "2025-04-23",
+    source: "Sports Network"
   },
 ];
 
@@ -65,6 +68,7 @@ interface VideoNews {
   videoUrl: string;
   date: string;
   description?: string;
+  source?: string; // Added source field
 }
 
 export function VideoNewsManagement() {
@@ -150,7 +154,8 @@ export function VideoNewsManagement() {
                 thumbnailUrl: "",
                 videoUrl: "",
                 date: new Date().toISOString().split('T')[0],
-                description: ""
+                description: "",
+                source: "" // Added source field
               }}
             />
           </DialogContent>
@@ -164,7 +169,7 @@ export function VideoNewsManagement() {
             <TableHead>Thumbnail</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Duration</TableHead>
+            <TableHead>Source</TableHead> {/* Added Source column */}
             <TableHead>Date</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -181,7 +186,7 @@ export function VideoNewsManagement() {
               </TableCell>
               <TableCell className="font-medium">{video.title}</TableCell>
               <TableCell>{video.category}</TableCell>
-              <TableCell>{video.duration}</TableCell>
+              <TableCell>{video.source || "—"}</TableCell> {/* Display source */}
               <TableCell>{video.date}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
@@ -372,6 +377,18 @@ function VideoForm({ onSubmit, isEditing, initialData }: VideoFormProps) {
               required
             />
           </div>
+        </div>
+
+        {/* Add Source field */}
+        <div className="space-y-2">
+          <Label htmlFor="source">Source (News Company Name)</Label>
+          <Input
+            id="source"
+            name="source"
+            value={formData.source || ""}
+            onChange={handleChange}
+            placeholder="e.g. JioNews, CNN, BBC"
+          />
         </div>
         
         <div className="space-y-2">

@@ -6,9 +6,10 @@ interface NewsBannerProps {
   category: string;
   imageUrl: string;
   id: string;
+  source?: string; // Adding source prop
 }
 
-export function NewsBanner({ headline, category, imageUrl, id }: NewsBannerProps) {
+export function NewsBanner({ headline, category, imageUrl, id, source }: NewsBannerProps) {
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
       case 'business': return 'bg-jiocategory-business';
@@ -37,9 +38,12 @@ export function NewsBanner({ headline, category, imageUrl, id }: NewsBannerProps
             {headline}
           </h1>
         </Link>
-        <p className="text-white/80 text-sm md:text-base">
-          {new Date().toLocaleDateString()}
-        </p>
+        <div className="flex justify-between items-center">
+          <p className="text-white/80 text-sm md:text-base">
+            {new Date().toLocaleDateString()}
+          </p>
+          {source && <p className="text-white font-medium text-sm md:text-base">{source}</p>}
+        </div>
       </div>
     </div>
   );

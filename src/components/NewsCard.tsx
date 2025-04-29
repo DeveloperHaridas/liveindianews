@@ -8,9 +8,10 @@ interface NewsCardProps {
   category: string;
   imageUrl: string;
   isPremium?: boolean;
+  source?: string; // Making source optional for backward compatibility
 }
 
-export function NewsCard({ id, headline, summary, category, imageUrl, isPremium = false }: NewsCardProps) {
+export function NewsCard({ id, headline, summary, category, imageUrl, isPremium = false, source }: NewsCardProps) {
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
       case 'business': return 'bg-jiocategory-business';
@@ -47,8 +48,9 @@ export function NewsCard({ id, headline, summary, category, imageUrl, isPremium 
           </h3>
           {summary && <p className="text-gray-600 text-sm line-clamp-3">{summary}</p>}
         </Link>
-        <div className="mt-4 text-gray-500 text-xs">
-          {new Date().toLocaleDateString()}
+        <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
+          <span>{new Date().toLocaleDateString()}</span>
+          {source && <span className="font-medium">{source}</span>}
         </div>
       </div>
     </div>

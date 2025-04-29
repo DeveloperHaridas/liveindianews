@@ -35,10 +35,15 @@ const Trending = () => {
                 <h2 className="text-xl font-bold text-white mb-2 group-hover:text-jiohighlight transition-colors">
                   {item.headline}
                 </h2>
-                <div className="flex items-center text-white/70 text-sm">
-                  <span className="mr-2">Trending</span>
-                  <span className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
-                  <span>{Math.floor(Math.random() * 5000) + 500} readers</span>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center text-white/70 text-sm">
+                    <span className="mr-2">Trending</span>
+                    <span className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
+                    <span>{Math.floor(Math.random() * 5000) + 500} readers</span>
+                  </div>
+                  {item.source && (
+                    <span className="text-white text-sm font-medium">{item.source}</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -56,6 +61,7 @@ const Trending = () => {
               category={item.category}
               imageUrl={item.imageUrl}
               isPremium={item.isPremium}
+              source={item.source}
             />
           ))}
         </div>

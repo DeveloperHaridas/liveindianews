@@ -14,6 +14,7 @@ interface VideoNews {
   videoUrl: string;
   date: string;
   description?: string;
+  source?: string; // Added source
 }
 
 const Shorts = () => {
@@ -38,7 +39,8 @@ const Shorts = () => {
             duration: "2:45",
             thumbnailUrl: "https://images.unsplash.com/photo-1554177255-61502b352de3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
             videoUrl: "https://example.com/video1.mp4",
-            date: "2025-04-25"
+            date: "2025-04-25",
+            source: "JioNews"
           },
           { 
             id: "2", 
@@ -47,7 +49,8 @@ const Shorts = () => {
             duration: "3:12",
             thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
             videoUrl: "https://example.com/video2.mp4",
-            date: "2025-04-24"
+            date: "2025-04-24",
+            source: "Tech Today"
           },
           { 
             id: "3", 
@@ -56,7 +59,8 @@ const Shorts = () => {
             duration: "1:58",
             thumbnailUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
             videoUrl: "https://example.com/video3.mp4",
-            date: "2025-04-23"
+            date: "2025-04-23",
+            source: "Sports Network"
           },
         ];
         setVideoNews(sampleVideoNews);

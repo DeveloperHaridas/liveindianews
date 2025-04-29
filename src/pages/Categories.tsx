@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -119,6 +118,7 @@ const Categories = () => {
               category={item.category}
               imageUrl={item.imageUrl}
               isPremium={item.isPremium}
+              source={item.source}
             />
           ))}
         </div>
