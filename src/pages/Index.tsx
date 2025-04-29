@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -22,7 +23,13 @@ interface NewsItem {
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [news, setNews] = useState<NewsItem[]>(defaultNews);
+  // Add source to defaultNews if missing
+  const defaultNewsWithSource = defaultNews.map(item => ({
+    ...item,
+    source: item.source || item.category // Use category as fallback if source is missing
+  }));
+  
+  const [news, setNews] = useState<NewsItem[]>(defaultNewsWithSource);
   
   // Load news from localStorage (set by admin panel)
   useEffect(() => {
@@ -40,13 +47,13 @@ const Index = () => {
           imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
           isPremium: false,
           date: item.date,
-          source: item.source
+          source: item.source || item.category // Ensure source exists
         }));
         
         // Combine admin news with default news, prioritizing admin entries
         const combinedNews = [
           ...adminNews, 
-          ...defaultNews.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
+          ...defaultNewsWithSource.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
         ];
         
         setNews(combinedNews);

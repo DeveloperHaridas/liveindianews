@@ -1,3 +1,4 @@
+
 const news = [
   {
     id: "1",
@@ -7,7 +8,8 @@ const news = [
     category: "Business",
     imageUrl: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     isPremium: false,
-    date: "2023-10-15"
+    date: "2023-10-15",
+    source: "Bloomberg"
   },
   {
     id: "2",
@@ -17,7 +19,8 @@ const news = [
     category: "Sports",
     imageUrl: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     isPremium: false,
-    date: "2023-10-17"
+    date: "2023-10-17",
+    source: "ESPN"
   },
   {
     id: "3",
@@ -27,7 +30,8 @@ const news = [
     category: "Technology",
     imageUrl: "https://images.unsplash.com/photo-1677442135740-a406823e8145?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80",
     isPremium: true,
-    date: "2023-10-12"
+    date: "2023-10-12",
+    source: "TechCrunch"
   },
   {
     id: "4",
@@ -37,7 +41,8 @@ const news = [
     category: "Entertainment",
     imageUrl: "https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1459&q=80",
     isPremium: false,
-    date: "2023-10-10"
+    date: "2023-10-10",
+    source: "Variety"
   },
   {
     id: "5",
@@ -47,7 +52,8 @@ const news = [
     category: "Health",
     imageUrl: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80",
     isPremium: true,
-    date: "2023-10-08"
+    date: "2023-10-08",
+    source: "ScienceDaily"
   },
   {
     id: "6",
@@ -57,7 +63,8 @@ const news = [
     category: "Science",
     imageUrl: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1611&q=80",
     isPremium: false,
-    date: "2023-10-14"
+    date: "2023-10-14",
+    source: "National Geographic"
   },
   {
     id: "7",
@@ -67,7 +74,8 @@ const news = [
     category: "Technology",
     imageUrl: "https://images.unsplash.com/photo-1546054454-aa26e2b734c7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
     isPremium: true,
-    date: "2023-10-11"
+    date: "2023-10-11",
+    source: "The Verge"
   },
   {
     id: "8",
@@ -77,7 +85,8 @@ const news = [
     category: "Business",
     imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1474&q=80",
     isPremium: false,
-    date: "2023-10-09"
+    date: "2023-10-09",
+    source: "Financial Times"
   },
   {
     id: "9",
@@ -87,7 +96,8 @@ const news = [
     category: "Science",
     imageUrl: "https://images.unsplash.com/photo-1569163139599-0f4518e6b423?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1557&q=80",
     isPremium: true,
-    date: "2023-10-16"
+    date: "2023-10-16",
+    source: "The Guardian"
   },
   {
     id: "10",
@@ -96,7 +106,8 @@ const news = [
     category: "Education",
     imageUrl: "https://images.unsplash.com/photo-1523580494863-6f3031224c94",
     isPremium: false,
-    date: "2023-10-15"
+    date: "2023-10-15",
+    source: "Education Weekly"
   },
   {
     id: "11",
@@ -105,7 +116,8 @@ const news = [
     category: "City",
     imageUrl: "https://images.unsplash.com/photo-1602928298849-325cec8771c0",
     isPremium: false,
-    date: "2023-10-16"
+    date: "2023-10-16",
+    source: "Mumbai Mirror"
   },
   {
     id: "12",
@@ -114,7 +126,8 @@ const news = [
     category: "Lifestyle",
     imageUrl: "https://images.unsplash.com/photo-1545205597-3d9d02c29597",
     isPremium: false,
-    date: "2023-10-14"
+    date: "2023-10-14",
+    source: "Wellness Magazine"
   },
   {
     id: "13",
@@ -123,7 +136,8 @@ const news = [
     category: "India",
     imageUrl: "https://images.unsplash.com/photo-1532375810709-75b1da00537c",
     isPremium: true,
-    date: "2023-10-13"
+    date: "2023-10-13",
+    source: "India Today"
   },
   {
     id: "14",
@@ -132,7 +146,8 @@ const news = [
     category: "World",
     imageUrl: "https://images.unsplash.com/photo-1532375810709-75b1da00537c",
     isPremium: false,
-    date: "2023-10-12"
+    date: "2023-10-12",
+    source: "BBC News"
   }
 ];
 
