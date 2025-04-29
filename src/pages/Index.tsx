@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -18,6 +17,7 @@ interface NewsItem {
   imageUrl: string;
   isPremium?: boolean;
   date: string;
+  source: string;
 }
 
 const Index = () => {
@@ -39,11 +39,17 @@ const Index = () => {
           category: item.category,
           imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
           isPremium: false,
-          date: item.date
+          date: item.date,
+          source: item.source
         }));
         
-        // Append admin news to default news or replace completely
-        setNews([...adminNews, ...defaultNews.filter(d => !adminNews.find((a: any) => a.id === d.id))]);
+        // Combine admin news with default news, prioritizing admin entries
+        const combinedNews = [
+          ...adminNews, 
+          ...defaultNews.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
+        ];
+        
+        setNews(combinedNews);
       }
     };
     
@@ -51,7 +57,14 @@ const Index = () => {
     
     // Listen for storage changes (when admin updates news)
     window.addEventListener("storage", loadNews);
-    return () => window.removeEventListener("storage", loadNews);
+    
+    // Also add a custom event listener for direct updates
+    window.addEventListener("newsUpdated", loadNews);
+    
+    return () => {
+      window.removeEventListener("storage", loadNews);
+      window.removeEventListener("newsUpdated", loadNews);
+    }
   }, []);
 
   // Get the featured news (first article)

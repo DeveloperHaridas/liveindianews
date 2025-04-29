@@ -23,15 +23,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle, Edit, Trash2 } from "lucide-react";
 import news from "@/data/newsData";
+
+// Extract all unique categories from the news data
+const availableCategories = Array.from(
+  new Set(news.map(item => item.category))
+).sort();
 
 // Sample news data
 const sampleNews = news.slice(0, 5).map(item => ({
   id: Number(item.id),
   title: item.headline,
-  source: item.category,
+  source: item.category, // Initially using category as source, will be changed by users
   category: item.category, 
   date: item.date,
   content: item.content || "",
@@ -76,6 +82,9 @@ export function NewsManagement() {
     // Store in localStorage
     localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
     
+    // Trigger storage event for other tabs to detect the change
+    window.dispatchEvent(new Event('storage'));
+    
     toast({
       title: "News Added",
       description: `"${news.title}" has been added successfully.`,
@@ -88,6 +97,9 @@ export function NewsManagement() {
     
     // Update localStorage
     localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+    
+    // Trigger storage event for other tabs to detect the change
+    window.dispatchEvent(new Event('storage'));
     
     toast({
       title: "News Updated",
@@ -103,6 +115,9 @@ export function NewsManagement() {
     
     // Update localStorage
     localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+    
+    // Trigger storage event for other tabs to detect the change
+    window.dispatchEvent(new Event('storage'));
     
     toast({
       title: "News Deleted",
@@ -134,6 +149,7 @@ export function NewsManagement() {
                 content: "",
                 imageUrl: ""
               }}
+              availableCategories={availableCategories}
             />
           </DialogContent>
         </Dialog>
@@ -180,6 +196,7 @@ export function NewsManagement() {
                           onSubmit={handleEditNews}
                           isEditing={true}
                           initialData={currentNews}
+                          availableCategories={availableCategories}
                         />
                       )}
                     </DialogContent>
@@ -231,13 +248,18 @@ interface NewsFormProps {
   onSubmit: (news: any) => void;
   isEditing: boolean;
   initialData: Omit<NewsItem, "id"> & Partial<Pick<NewsItem, "id">>;
+  availableCategories: string[];
 }
 
-function NewsForm({ onSubmit, isEditing, initialData }: NewsFormProps) {
+function NewsForm({ onSubmit, isEditing, initialData, availableCategories }: NewsFormProps) {
   const [formData, setFormData] = useState(initialData);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  
+  const handleSelectChange = (name: string, value: string) => {
     setFormData({ ...formData, [name]: value });
   };
   
@@ -271,12 +293,13 @@ function NewsForm({ onSubmit, isEditing, initialData }: NewsFormProps) {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="source">Source</Label>
+            <Label htmlFor="source">Source (News Company Name)</Label>
             <Input
               id="source"
               name="source"
               value={formData.source}
               onChange={handleChange}
+              placeholder="e.g. JioNews, CNN, BBC"
               required
             />
           </div>
@@ -285,13 +308,20 @@ function NewsForm({ onSubmit, isEditing, initialData }: NewsFormProps) {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Input
-              id="category"
+            <Select 
               name="category"
               value={formData.category}
-              onChange={handleChange}
-              required
-            />
+              onValueChange={(value) => handleSelectChange('category', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableCategories.map((category) => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">
