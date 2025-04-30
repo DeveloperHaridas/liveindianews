@@ -6,8 +6,11 @@ import { NewsBanner } from "@/components/NewsBanner";
 import { NewsCard } from "@/components/NewsCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { Crown } from "lucide-react";
+import { Crown, Film } from "lucide-react";
 import defaultNews from "@/data/newsData";
+import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 interface NewsItem {
   id: string;
@@ -21,6 +24,18 @@ interface NewsItem {
   source: string;
 }
 
+interface VideoNews {
+  id: string;
+  title: string;
+  category: string;
+  duration: string;
+  thumbnailUrl: string;
+  videoUrl: string;
+  date: string;
+  description?: string;
+  source?: string;
+}
+
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   // Add source to defaultNews if missing
@@ -30,6 +45,9 @@ const Index = () => {
   }));
   
   const [news, setNews] = useState<NewsItem[]>(defaultNewsWithSource);
+  const [featuredVideos, setFeaturedVideos] = useState<VideoNews[]>([]);
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Load news from localStorage (set by admin panel)
   useEffect(() => {
@@ -79,6 +97,37 @@ const Index = () => {
     }
   }, []);
 
+  // Load featured videos for the shorts section (desktop only)
+  useEffect(() => {
+    if (isMobile) return; // Skip for mobile
+
+    const loadFeaturedVideos = () => {
+      const videoNewsData = localStorage.getItem("videoNewsData");
+      if (videoNewsData) {
+        try {
+          const videoNews = JSON.parse(videoNewsData);
+          // Just get the first 4 videos as featured
+          setFeaturedVideos(videoNews.slice(0, 4));
+        } catch (error) {
+          console.error("Error parsing video news data:", error);
+          // Fallback to empty array
+          setFeaturedVideos([]);
+        }
+      }
+    };
+
+    loadFeaturedVideos();
+    
+    // Listen for storage changes (when admin updates videos)
+    window.addEventListener("storage", loadFeaturedVideos);
+    window.addEventListener("videoNewsUpdated", loadFeaturedVideos);
+    
+    return () => {
+      window.removeEventListener("storage", loadFeaturedVideos);
+      window.removeEventListener("videoNewsUpdated", loadFeaturedVideos);
+    };
+  }, [isMobile]);
+
   // Get the featured news (first article)
   const featuredNews = news[0];
 
@@ -109,6 +158,49 @@ const Index = () => {
             source={featuredNews.source}
           />
         </div>
+
+        {/* Shorts Section - Only for Desktop */}
+        {!isMobile && featuredVideos.length > 0 && (
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <Film className="h-5 w-5 text-jiohighlight" />
+                Featured Shorts
+              </h2>
+              <Button 
+                onClick={() => navigate('/shorts')} 
+                variant="outline"
+                className="text-sm"
+              >
+                View All
+              </Button>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              {featuredVideos.map((video) => (
+                <div 
+                  key={video.id}
+                  className="relative rounded-lg overflow-hidden cursor-pointer group"
+                  onClick={() => navigate(`/shorts?video=${video.id}`)}
+                >
+                  <div className="aspect-video">
+                    <img 
+                      src={video.thumbnailUrl} 
+                      alt={video.title}
+                      className="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-3">
+                    <span className="text-xs text-white/75">{video.category}</span>
+                    <h3 className="text-sm font-medium text-white line-clamp-2">{video.title}</h3>
+                  </div>
+                  <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                    {video.duration}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Category Filter with Premium Styling */}
         <div className="premium-card p-4 rounded-lg mb-8">
