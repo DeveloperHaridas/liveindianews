@@ -282,7 +282,7 @@ export function NewsManagement() {
                   <SelectValue placeholder="All sources" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All sources</SelectItem>
+                  <SelectItem value="all-sources">All sources</SelectItem>
                   {uniqueSources.map((source) => (
                     <SelectItem key={source} value={source}>{source}</SelectItem>
                   ))}
@@ -300,7 +300,7 @@ export function NewsManagement() {
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All categories</SelectItem>
+                  <SelectItem value="all-categories">All categories</SelectItem>
                   {availableCategories.map((category) => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
@@ -318,7 +318,7 @@ export function NewsManagement() {
                   <SelectValue placeholder="All dates" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All dates</SelectItem>
+                  <SelectItem value="all-dates">All dates</SelectItem>
                   {uniqueDates.map((date) => (
                     <SelectItem key={date} value={date}>{date}</SelectItem>
                   ))}
