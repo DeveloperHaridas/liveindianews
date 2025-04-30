@@ -63,7 +63,12 @@ export function NewsManagement() {
   useEffect(() => {
     const storedNews = localStorage.getItem("adminNewsData");
     if (storedNews) {
-      setNewsItems(JSON.parse(storedNews));
+      try {
+        setNewsItems(JSON.parse(storedNews));
+      } catch (error) {
+        console.error("Error parsing stored news:", error);
+        setNewsItems(sampleNews);
+      }
     } else {
       setNewsItems(sampleNews);
     }
@@ -84,6 +89,10 @@ export function NewsManagement() {
     // Trigger storage event for other tabs to detect the change
     window.dispatchEvent(new Event('storage'));
     
+    // Trigger custom event for same-tab updates
+    const newsUpdatedEvent = new CustomEvent('newsUpdated');
+    window.dispatchEvent(newsUpdatedEvent);
+    
     toast({
       title: "News Added",
       description: `"${news.title}" has been added successfully.`,
@@ -99,6 +108,10 @@ export function NewsManagement() {
     
     // Trigger storage event for other tabs to detect the change
     window.dispatchEvent(new Event('storage'));
+    
+    // Trigger custom event for same-tab updates
+    const newsUpdatedEvent = new CustomEvent('newsUpdated');
+    window.dispatchEvent(newsUpdatedEvent);
     
     toast({
       title: "News Updated",
@@ -117,6 +130,10 @@ export function NewsManagement() {
     
     // Trigger storage event for other tabs to detect the change
     window.dispatchEvent(new Event('storage'));
+    
+    // Trigger custom event for same-tab updates
+    const newsUpdatedEvent = new CustomEvent('newsUpdated');
+    window.dispatchEvent(newsUpdatedEvent);
     
     toast({
       title: "News Deleted",

@@ -1,24 +1,106 @@
+
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { Button } from "@/components/ui/button";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import news from "@/data/newsData";
+import defaultNews from "@/data/newsData";
 import { useAuth } from "@/hooks/useAuth";
+
+interface NewsItem {
+  id: string;
+  headline: string;
+  summary?: string;
+  content?: string;
+  category: string;
+  imageUrl: string;
+  isPremium?: boolean;
+  date: string;
+  source: string;
+}
 
 const NewsDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [allNews, setAllNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Load all news (default + admin)
+  useEffect(() => {
+    const loadAllNews = () => {
+      // Initialize with default news
+      let combinedNews = defaultNews.map(item => ({
+        ...item,
+        source: item.source || item.category
+      }));
+      
+      // Add admin news from localStorage if available
+      const adminNewsData = localStorage.getItem("adminNewsData");
+      if (adminNewsData) {
+        try {
+          const adminNews = JSON.parse(adminNewsData).map((item: any) => ({
+            id: String(item.id),
+            headline: item.title,
+            summary: item.content?.substring(0, 120) + "...",
+            content: item.content,
+            category: item.category,
+            imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+            isPremium: false,
+            date: item.date,
+            source: item.source || item.category
+          }));
+          
+          // Merge admin news with default news, prioritizing admin entries
+          combinedNews = [
+            ...adminNews,
+            ...combinedNews.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
+          ];
+        } catch (error) {
+          console.error("Error parsing admin news data:", error);
+        }
+      }
+      
+      setAllNews(combinedNews);
+      setLoading(false);
+    };
+    
+    loadAllNews();
+    
+    // Listen for storage changes
+    window.addEventListener("storage", loadAllNews);
+    window.addEventListener("newsUpdated", loadAllNews);
+    
+    return () => {
+      window.removeEventListener("storage", loadAllNews);
+      window.removeEventListener("newsUpdated", loadAllNews);
+    };
+  }, []);
   
   // Find the article with the matching ID
-  const article = news.find(item => item.id === id);
+  const article = allNews.find(item => item.id === id);
   
   // Get related articles in the same category
   const relatedArticles = article 
-    ? news.filter(item => item.category === article.category && item.id !== article.id).slice(0, 3)
+    ? allNews.filter(item => item.category === article.category && item.id !== article.id).slice(0, 3)
     : [];
+  
+  // If loading, show loading state
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow container mx-auto px-4 py-12 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg text-gray-600">Loading article...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   
   // If article doesn't exist, show not found
   if (!article) {
@@ -75,7 +157,7 @@ const NewsDetail = () => {
               </div>
               <div className="h-[200px] overflow-hidden">
                 <p className="text-lg leading-relaxed text-gray-700">
-                  {article.content.substring(0, 150)}...
+                  {article.content?.substring(0, 150) || article.summary?.substring(0, 150)}...
                 </p>
               </div>
             </div>
@@ -94,6 +176,7 @@ const NewsDetail = () => {
                     category={item.category}
                     imageUrl={item.imageUrl}
                     isPremium={item.isPremium}
+                    source={item.source}
                   />
                 ))}
               </div>

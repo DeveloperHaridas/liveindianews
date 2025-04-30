@@ -1,14 +1,76 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building } from "lucide-react";
-import news from "@/data/newsData";
+import defaultNews from "@/data/newsData";
 import { cn } from "@/lib/utils";
+
+interface NewsItem {
+  id: string;
+  headline: string;
+  summary?: string;
+  content?: string;
+  category: string;
+  imageUrl: string;
+  isPremium?: boolean;
+  date: string;
+  source: string;
+}
 
 const Categories = () => {
   const [activeCategory, setActiveCategory] = useState("Latest");
+  const [allNews, setAllNews] = useState<NewsItem[]>(defaultNews);
+  
+  // Load news from localStorage (set by admin panel)
+  useEffect(() => {
+    const loadNews = () => {
+      const adminNewsData = localStorage.getItem("adminNewsData");
+      
+      if (adminNewsData) {
+        try {
+          // Convert admin news format to match the expected format
+          const adminNews = JSON.parse(adminNewsData).map((item: any) => ({
+            id: String(item.id),
+            headline: item.title,
+            summary: item.content?.substring(0, 120) + "...",
+            content: item.content,
+            category: item.category,
+            imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+            isPremium: false,
+            date: item.date,
+            source: item.source || item.category // Ensure source exists
+          }));
+          
+          // Combine admin news with default news, prioritizing admin entries
+          const combinedNews = [
+            ...adminNews, 
+            ...defaultNews.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
+          ];
+          
+          setAllNews(combinedNews);
+        } catch (error) {
+          console.error("Error parsing admin news data:", error);
+        }
+      }
+    };
+    
+    // Initial load
+    loadNews();
+    
+    // Listen for storage changes (when admin updates news)
+    window.addEventListener("storage", loadNews);
+    
+    // Also add a custom event listener for direct updates
+    window.addEventListener("newsUpdated", loadNews);
+    
+    return () => {
+      window.removeEventListener("storage", loadNews);
+      window.removeEventListener("newsUpdated", loadNews);
+    }
+  }, []);
   
   const categoryIcons = {
     Education: Book,
@@ -21,25 +83,36 @@ const Categories = () => {
     City: Building,
   };
   
-  // Get unique categories
-  const categories = [
-    "Latest",
-    "India",
-    "World",
-    "Education",
-    "Health",
-    "Lifestyle",
-    "City",
-    "Web Stories",
-    ...Array.from(new Set(news.map(item => item.category))).filter(cat => 
-      !["Latest", "India", "World", "Education", "Health", "Lifestyle", "City", "Web Stories"].includes(cat)
-    )
-  ];
+  // Get unique categories from combined news sources
+  const getUniqueCategories = () => {
+    const defaultCategories = [
+      "Latest",
+      "India",
+      "World",
+      "Education",
+      "Health",
+      "Lifestyle",
+      "City",
+      "Web Stories"
+    ];
+    
+    // Get unique categories from news items
+    const newsCategories = Array.from(new Set(allNews.map(item => item.category)));
+    
+    return [
+      ...defaultCategories,
+      ...newsCategories.filter(cat => 
+        !defaultCategories.includes(cat)
+      )
+    ];
+  };
+  
+  const categories = getUniqueCategories();
   
   // Filter news by active category
   const filteredNews = activeCategory === "Latest" 
-    ? news.slice(0, 10) 
-    : news.filter(item => item.category === activeCategory);
+    ? allNews.slice(0, 10) 
+    : allNews.filter(item => item.category === activeCategory);
   
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
@@ -51,6 +124,11 @@ const Categories = () => {
       case 'lifestyle': return 'bg-green-500';
       case 'web stories': return 'bg-pink-500';
       case 'city': return 'bg-indigo-500';
+      case 'business': return 'bg-jiocategory-business';
+      case 'sports': return 'bg-jiocategory-sports';
+      case 'entertainment': return 'bg-jiocategory-entertainment';
+      case 'technology': return 'bg-jiocategory-technology';
+      case 'science': return 'bg-jiocategory-science';
       default: return 'bg-gray-500';
     }
   };
@@ -65,6 +143,11 @@ const Categories = () => {
       case 'lifestyle': return 'hover:bg-green-500 hover:text-white';
       case 'web stories': return 'hover:bg-pink-500 hover:text-white';
       case 'city': return 'hover:bg-indigo-500 hover:text-white';
+      case 'business': return 'hover:bg-jiocategory-business hover:text-white';
+      case 'sports': return 'hover:bg-jiocategory-sports hover:text-white';
+      case 'entertainment': return 'hover:bg-jiocategory-entertainment hover:text-white';
+      case 'technology': return 'hover:bg-jiocategory-technology hover:text-white';
+      case 'science': return 'hover:bg-jiocategory-science hover:text-white';
       default: return 'hover:bg-gray-500 hover:text-white';
     }
   };

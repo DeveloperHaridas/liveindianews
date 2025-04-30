@@ -37,29 +37,34 @@ const Index = () => {
       const adminNewsData = localStorage.getItem("adminNewsData");
       
       if (adminNewsData) {
-        // Convert admin news format to match the expected format
-        const adminNews = JSON.parse(adminNewsData).map((item: any) => ({
-          id: String(item.id),
-          headline: item.title,
-          summary: item.content?.substring(0, 120) + "...",
-          content: item.content,
-          category: item.category,
-          imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-          isPremium: false,
-          date: item.date,
-          source: item.source || item.category // Ensure source exists
-        }));
-        
-        // Combine admin news with default news, prioritizing admin entries
-        const combinedNews = [
-          ...adminNews, 
-          ...defaultNewsWithSource.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
-        ];
-        
-        setNews(combinedNews);
+        try {
+          // Convert admin news format to match the expected format
+          const adminNews = JSON.parse(adminNewsData).map((item: any) => ({
+            id: String(item.id),
+            headline: item.title,
+            summary: item.content?.substring(0, 120) + "...",
+            content: item.content,
+            category: item.category,
+            imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+            isPremium: false,
+            date: item.date,
+            source: item.source || item.category // Ensure source exists
+          }));
+          
+          // Combine admin news with default news, prioritizing admin entries
+          const combinedNews = [
+            ...adminNews, 
+            ...defaultNewsWithSource.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
+          ];
+          
+          setNews(combinedNews);
+        } catch (error) {
+          console.error("Error parsing admin news data:", error);
+        }
       }
     };
     
+    // Initial load
     loadNews();
     
     // Listen for storage changes (when admin updates news)

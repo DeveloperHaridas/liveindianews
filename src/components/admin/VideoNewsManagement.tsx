@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -68,14 +68,29 @@ interface VideoNews {
   videoUrl: string;
   date: string;
   description?: string;
-  source?: string; // Added source field
+  source?: string;
 }
 
 export function VideoNewsManagement() {
-  const [videoNews, setVideoNews] = useState<VideoNews[]>(sampleVideoNews);
+  const [videoNews, setVideoNews] = useState<VideoNews[]>([]);
   const [currentVideo, setCurrentVideo] = useState<VideoNews | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+  
+  // Load from localStorage or use default data
+  useEffect(() => {
+    const storedVideoNews = localStorage.getItem("videoNewsData");
+    if (storedVideoNews) {
+      try {
+        setVideoNews(JSON.parse(storedVideoNews));
+      } catch (error) {
+        console.error("Error parsing video news data:", error);
+        setVideoNews(sampleVideoNews);
+      }
+    } else {
+      setVideoNews(sampleVideoNews);
+    }
+  }, []);
   
   const handleAddVideo = (video: Omit<VideoNews, "id">) => {
     const newVideo = {
@@ -83,10 +98,18 @@ export function VideoNewsManagement() {
       id: Date.now().toString(),
     };
     
-    setVideoNews([...videoNews, newVideo]);
+    const updatedVideos = [...videoNews, newVideo];
+    setVideoNews(updatedVideos);
     
     // Store in localStorage to persist changes
-    localStorage.setItem("videoNewsData", JSON.stringify([...videoNews, newVideo]));
+    localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
+    
+    // Trigger storage event for other tabs
+    window.dispatchEvent(new Event('storage'));
+    
+    // Trigger custom event for same-tab updates
+    const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
+    window.dispatchEvent(videoNewsUpdatedEvent);
     
     toast({
       title: "Video Added",
@@ -95,12 +118,18 @@ export function VideoNewsManagement() {
   };
   
   const handleEditVideo = (video: VideoNews) => {
-    setVideoNews(videoNews.map(item => item.id === video.id ? video : item));
+    const updatedVideos = videoNews.map(item => item.id === video.id ? video : item);
+    setVideoNews(updatedVideos);
     
     // Update localStorage
-    localStorage.setItem("videoNewsData", JSON.stringify(
-      videoNews.map(item => item.id === video.id ? video : item)
-    ));
+    localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
+    
+    // Trigger storage event for other tabs
+    window.dispatchEvent(new Event('storage'));
+    
+    // Trigger custom event for same-tab updates
+    const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
+    window.dispatchEvent(videoNewsUpdatedEvent);
     
     toast({
       title: "Video Updated",
@@ -116,6 +145,13 @@ export function VideoNewsManagement() {
     
     // Update localStorage
     localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
+    
+    // Trigger storage event for other tabs
+    window.dispatchEvent(new Event('storage'));
+    
+    // Trigger custom event for same-tab updates
+    const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
+    window.dispatchEvent(videoNewsUpdatedEvent);
     
     toast({
       title: "Video Deleted",
