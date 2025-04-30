@@ -6,11 +6,13 @@ import { NewsBanner } from "@/components/NewsBanner";
 import { NewsCard } from "@/components/NewsCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { Crown, Film } from "lucide-react";
+import { Crown, Film, Clock } from "lucide-react";
 import defaultNews from "@/data/newsData";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { WebStoriesSection } from "@/components/WebStoriesSection";
+import { LatestNews } from "@/components/LatestNews";
 
 interface NewsItem {
   id: string;
@@ -36,6 +38,14 @@ interface VideoNews {
   source?: string;
 }
 
+interface WebStory {
+  id: string;
+  title: string;
+  imageUrl: string;
+  timeAgo?: string;
+  category?: string;
+}
+
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   // Add source to defaultNews if missing
@@ -46,6 +56,7 @@ const Index = () => {
   
   const [news, setNews] = useState<NewsItem[]>(defaultNewsWithSource);
   const [featuredVideos, setFeaturedVideos] = useState<VideoNews[]>([]);
+  const [webStories, setWebStories] = useState<WebStory[]>([]);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
@@ -128,6 +139,77 @@ const Index = () => {
     };
   }, [isMobile]);
 
+  // Generate web stories based on news data
+  useEffect(() => {
+    // Create web stories from existing news data
+    const generateWebStories = () => {
+      // Use 5 news items as web stories
+      const storyItems = news.slice(0, 5).map(item => ({
+        id: `story-${item.id}`,
+        title: item.headline,
+        imageUrl: item.imageUrl,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        category: item.category
+      }));
+      
+      const placeholderImages = [
+        "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-4.0.3&auto=format&fit=crop"
+      ];
+      
+      // Add some additional web stories with placeholder images if we don't have enough
+      if (storyItems.length < 5) {
+        const additionalStories = [
+          {
+            id: 'story-101',
+            title: 'The Future of AI in Journalism',
+            imageUrl: placeholderImages[0],
+            timeAgo: '2 hours ago',
+            category: 'Technology'
+          },
+          {
+            id: 'story-102',
+            title: 'Top 10 Travel Destinations for 2025',
+            imageUrl: placeholderImages[1],
+            timeAgo: '4 hours ago',
+            category: 'Lifestyle'
+          },
+          {
+            id: 'story-103',
+            title: 'Breakthrough in Renewable Energy Storage',
+            imageUrl: placeholderImages[2],
+            timeAgo: '5 hours ago',
+            category: 'Science'
+          },
+          {
+            id: 'story-104',
+            title: 'Global Economic Outlook for Next Quarter',
+            imageUrl: placeholderImages[3],
+            timeAgo: '8 hours ago',
+            category: 'Business'
+          },
+          {
+            id: 'story-105',
+            title: 'New Health Study Reveals Benefits of Mediterranean Diet',
+            imageUrl: placeholderImages[4],
+            timeAgo: '12 hours ago',
+            category: 'Health'
+          }
+        ];
+        
+        const neededStories = 5 - storyItems.length;
+        setWebStories([...storyItems, ...additionalStories.slice(0, neededStories)]);
+      } else {
+        setWebStories(storyItems);
+      }
+    };
+    
+    generateWebStories();
+  }, [news]);
+
   // Get the featured news (first article)
   const featuredNews = news[0];
 
@@ -138,6 +220,35 @@ const Index = () => {
   const filteredNews = activeCategory === "all" 
     ? news.slice(1) // Skip the featured news
     : news.filter(item => item.category.toLowerCase() === activeCategory.toLowerCase() && item.id !== featuredNews.id);
+
+  // Generate latest news items
+  const latestNewsItems = news.slice(0, 5).map(item => ({
+    id: item.id,
+    headline: item.headline,
+    timeAgo: getTimeAgo(new Date(item.date)),
+    imageUrl: item.imageUrl,
+    category: item.category
+  }));
+
+  // Helper function to calculate time ago
+  function getTimeAgo(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) {
+      return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
+    }
+    if (diffHours > 0) {
+      return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+    }
+    if (diffMins > 0) {
+      return diffMins === 1 ? '1 minute ago' : `${diffMins} minutes ago`;
+    }
+    return 'Just now';
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -158,6 +269,11 @@ const Index = () => {
             source={featuredNews.source}
           />
         </div>
+
+        {/* Web Stories Section */}
+        {!isMobile && webStories.length > 0 && (
+          <WebStoriesSection stories={webStories} />
+        )}
 
         {/* Shorts Section - Only for Desktop */}
         {!isMobile && featuredVideos.length > 0 && (
@@ -211,21 +327,52 @@ const Index = () => {
           />
         </div>
 
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.map(item => (
-            <NewsCard
-              key={item.id}
-              id={item.id}
-              headline={item.headline}
-              summary={item.summary}
-              category={item.category}
-              imageUrl={item.imageUrl}
-              isPremium={item.isPremium}
-              source={item.source}
+        {/* Latest News Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            {/* News Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredNews.slice(0, 4).map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Latest News Sidebar */}
+          <div className="lg:col-span-1">
+            <LatestNews 
+              title="Latest Updates"
+              items={latestNewsItems}
             />
-          ))}
+          </div>
         </div>
+
+        {/* More News Grid */}
+        {filteredNews.length > 4 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            {filteredNews.slice(4).map(item => (
+              <NewsCard
+                key={item.id}
+                id={item.id}
+                headline={item.headline}
+                summary={item.summary}
+                category={item.category}
+                imageUrl={item.imageUrl}
+                isPremium={item.isPremium}
+                source={item.source}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Premium Newsletter Signup */}
         <div className="mt-12">
