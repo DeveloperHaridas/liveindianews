@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -28,9 +27,29 @@ import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle, Edit, Trash2, Upload, Filter } from "lucide-react";
 import news from "@/data/newsData";
 
-// Extract all unique categories from the news data
+// Updated to include Latest and Web Stories categories
+const baseCategories = [
+  "Latest",
+  "Web Stories",
+  "India", 
+  "World", 
+  "Education", 
+  "Health", 
+  "Lifestyle", 
+  "City", 
+  "Business", 
+  "Sports", 
+  "Entertainment", 
+  "Technology", 
+  "Science"
+];
+
+// Extract all unique categories from the news data and combine with base categories
 const availableCategories = Array.from(
-  new Set(news.map(item => item.category))
+  new Set([
+    ...baseCategories,
+    ...news.map(item => item.category)
+  ])
 ).sort();
 
 // Sample news data
@@ -43,6 +62,49 @@ const sampleNews = news.slice(0, 5).map(item => ({
   content: item.content || "",
   imageUrl: item.imageUrl
 }));
+
+// Add some sample Web Stories and Latest news
+const additionalSampleNews = [
+  {
+    id: 101,
+    title: "Latest Breaking News: Economic Summit",
+    source: "JioNews",
+    category: "Latest",
+    date: new Date().toISOString().split('T')[0],
+    content: "This is the latest breaking news about the economic summit being held in the capital.",
+    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3"
+  },
+  {
+    id: 102,
+    title: "Web Story: The Rise of AI in Daily Life",
+    source: "JioNews",
+    category: "Web Stories",
+    date: new Date().toISOString().split('T')[0],
+    content: "This web story explores how artificial intelligence is transforming our daily lives.",
+    imageUrl: "https://images.unsplash.com/photo-1535378917042-10a22c95931a?ixlib=rb-4.0.3"
+  },
+  {
+    id: 103,
+    title: "Latest Update: New Government Policies",
+    source: "JioNews",
+    category: "Latest",
+    date: new Date().toISOString().split('T')[0],
+    content: "Latest updates on the new policies announced by the government yesterday.",
+    imageUrl: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?ixlib=rb-4.0.3"
+  },
+  {
+    id: 104,
+    title: "Web Story: Celebrating Local Heroes",
+    source: "JioNews",
+    category: "Web Stories",
+    date: new Date().toISOString().split('T')[0],
+    content: "A visual journey showcasing the impact of local heroes in our communities.",
+    imageUrl: "https://images.unsplash.com/photo-1469571486292-b53601021a68?ixlib=rb-4.0.3"
+  }
+];
+
+// Combine with sample news
+const enhancedSampleNews = [...sampleNews, ...additionalSampleNews];
 
 interface NewsItem {
   id: number;
@@ -85,12 +147,12 @@ export function NewsManagement() {
         setFilteredNews(parsedNews);
       } catch (error) {
         console.error("Error parsing stored news:", error);
-        setNewsItems(sampleNews);
-        setFilteredNews(sampleNews);
+        setNewsItems(enhancedSampleNews);
+        setFilteredNews(enhancedSampleNews);
       }
     } else {
-      setNewsItems(sampleNews);
-      setFilteredNews(sampleNews);
+      setNewsItems(enhancedSampleNews);
+      setFilteredNews(enhancedSampleNews);
     }
   }, []);
 

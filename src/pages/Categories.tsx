@@ -4,11 +4,12 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock } from "lucide-react";
+import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock, Film } from "lucide-react";
 import defaultNews from "@/data/newsData";
 import { cn } from "@/lib/utils";
 import { WebStoriesSection } from "@/components/WebStoriesSection";
 import { LatestNews } from "@/components/LatestNews";
+import { BottomNav } from "@/components/BottomNav";
 
 interface NewsItem {
   id: string;
@@ -86,28 +87,83 @@ const Categories = () => {
   
   // Generate web stories and latest news based on current category
   useEffect(() => {
-    // Filter news by active category for web stories
-    const categoryNews = activeCategory === "Latest" 
-      ? allNews.slice(0, 10) 
-      : allNews.filter(item => item.category === activeCategory);
+    // For Web Stories category, show all web stories
+    // For Latest category, show all latest news
+    // For other categories, filter by that category
+    
+    if (activeCategory === "Web Stories") {
+      // Filter all news items that are web stories
+      const webStoriesNews = allNews.filter(item => item.category === "Web Stories");
+      
+      const storyItems = webStoriesNews.map(item => ({
+        id: `story-${item.id}`,
+        title: item.headline,
+        imageUrl: item.imageUrl,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        category: item.category
+      }));
+      
+      setWebStories(storyItems);
+      setLatestNewsItems([]);  // Clear latest news when showing web stories
+      return;
+    } 
+    
+    if (activeCategory === "Latest") {
+      // Filter all news items that are latest news
+      const latestNews = allNews.filter(item => item.category === "Latest");
+      
+      const latestItems = latestNews.map(item => ({
+        id: item.id,
+        headline: item.headline,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        imageUrl: item.imageUrl,
+        category: item.category
+      }));
+      
+      setLatestNewsItems(latestItems);
+      
+      // Also create web stories for the Latest category
+      const storyItems = allNews
+        .filter(item => item.category === "Web Stories")
+        .slice(0, 5)
+        .map(item => ({
+          id: `story-${item.id}`,
+          title: item.headline,
+          imageUrl: item.imageUrl,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          category: item.category
+        }));
+      
+      setWebStories(storyItems);
+      return;
+    }
+    
+    // For other categories, filter by that category
+    const categoryNews = allNews.filter(item => item.category === activeCategory);
     
     // Create web stories from filtered news
-    const storyItems = categoryNews.slice(0, 5).map(item => ({
-      id: `story-${item.id}`,
-      title: item.headline,
-      imageUrl: item.imageUrl,
-      timeAgo: getTimeAgo(new Date(item.date)),
-      category: item.category
-    }));
+    const storyItems = allNews
+      .filter(item => item.category === "Web Stories")
+      .slice(0, 5)
+      .map(item => ({
+        id: `story-${item.id}`,
+        title: item.headline,
+        imageUrl: item.imageUrl,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        category: "Web Stories"
+      }));
     
-    // Create latest news items
-    const latestItems = categoryNews.slice(0, 5).map(item => ({
-      id: item.id,
-      headline: item.headline,
-      timeAgo: getTimeAgo(new Date(item.date)),
-      imageUrl: item.imageUrl,
-      category: item.category
-    }));
+    // Create latest news items from the Latest category
+    const latestItems = allNews
+      .filter(item => item.category === "Latest")
+      .slice(0, 5)
+      .map(item => ({
+        id: item.id,
+        headline: item.headline,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        imageUrl: item.imageUrl,
+        category: "Latest"
+      }));
     
     setWebStories(storyItems);
     setLatestNewsItems(latestItems);
@@ -122,28 +178,29 @@ const Categories = () => {
     Lifestyle: Leaf,
     "Web Stories": Newspaper,
     City: Building,
+    Shorts: Film,
   };
   
   // Get unique categories from combined news sources
   const getUniqueCategories = () => {
-    const defaultCategories = [
+    const baseCategories = [
       "Latest",
+      "Web Stories",
       "India",
       "World",
       "Education",
       "Health",
       "Lifestyle",
-      "City",
-      "Web Stories"
+      "City"
     ];
     
     // Get unique categories from news items
     const newsCategories = Array.from(new Set(allNews.map(item => item.category)));
     
     return [
-      ...defaultCategories,
+      ...baseCategories,
       ...newsCategories.filter(cat => 
-        !defaultCategories.includes(cat)
+        !baseCategories.includes(cat)
       )
     ];
   };
@@ -152,8 +209,10 @@ const Categories = () => {
   
   // Filter news by active category
   const filteredNews = activeCategory === "Latest" 
-    ? allNews.slice(0, 10) 
-    : allNews.filter(item => item.category === activeCategory);
+    ? allNews.filter(item => item.category === "Latest")
+    : activeCategory === "Web Stories"
+      ? allNews.filter(item => item.category === "Web Stories")
+      : allNews.filter(item => item.category === activeCategory);
   
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
@@ -251,18 +310,18 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Web Stories Section - show when we have web stories for this category */}
+        {/* Web Stories Section - always show for all categories */}
         {webStories.length > 0 && (
           <div className="mb-8">
             <WebStoriesSection stories={webStories} />
           </div>
         )}
 
-        {/* Latest News Section - show for all categories */}
+        {/* Latest News Section - always show for all categories */}
         {latestNewsItems.length > 0 && (
           <div className="mb-8">
             <LatestNews 
-              title={`Latest ${activeCategory} Updates`}
+              title={activeCategory === "Latest" ? "Latest Updates" : "Latest News Updates"}
               items={latestNewsItems}
             />
           </div>
@@ -294,6 +353,7 @@ const Categories = () => {
       </main>
       
       <Footer />
+      <BottomNav />
     </div>
   );
 };
