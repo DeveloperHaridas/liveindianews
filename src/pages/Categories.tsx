@@ -88,15 +88,12 @@ const Categories = () => {
   // Generate web stories and latest news based on current category
   useEffect(() => {
     // For Web Stories category, show all web stories
-    // For Latest category, show all latest news
-    // For other categories, filter by that category
-    
     if (activeCategory === "Web Stories") {
       // Filter all news items that are web stories
       const webStoriesNews = allNews.filter(item => item.category === "Web Stories");
       
       const storyItems = webStoriesNews.map(item => ({
-        id: `story-${item.id}`,
+        id: item.id,
         title: item.headline,
         imageUrl: item.imageUrl,
         timeAgo: getTimeAgo(new Date(item.date)),
@@ -104,7 +101,20 @@ const Categories = () => {
       }));
       
       setWebStories(storyItems);
-      setLatestNewsItems([]);  // Clear latest news when showing web stories
+      
+      // Also display some latest news items when in Web Stories category
+      const latestItems = allNews
+        .filter(item => item.category === "Latest")
+        .slice(0, 5)
+        .map(item => ({
+          id: item.id,
+          headline: item.headline,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          imageUrl: item.imageUrl,
+          category: "Latest"
+        }));
+      
+      setLatestNewsItems(latestItems);
       return;
     } 
     
@@ -131,7 +141,7 @@ const Categories = () => {
           title: item.headline,
           imageUrl: item.imageUrl,
           timeAgo: getTimeAgo(new Date(item.date)),
-          category: item.category
+          category: "Web Stories"
         }));
       
       setWebStories(storyItems);
@@ -327,23 +337,71 @@ const Categories = () => {
           </div>
         )}
         
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.map(item => (
-            <NewsCard
-              key={item.id}
-              id={item.id}
-              headline={item.headline}
-              summary={item.summary}
-              category={item.category}
-              imageUrl={item.imageUrl}
-              isPremium={item.isPremium}
-              source={item.source}
-            />
-          ))}
-        </div>
+        {/* News Grid - only show for the active category */}
+        {activeCategory !== "Web Stories" && activeCategory !== "Latest" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {allNews
+              .filter(item => item.category === activeCategory)
+              .map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))
+            }
+          </div>
+        )}
         
-        {filteredNews.length === 0 && (
+        {/* For Web Stories category, display their cards in a grid */}
+        {activeCategory === "Web Stories" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {allNews
+              .filter(item => item.category === "Web Stories")
+              .map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))
+            }
+          </div>
+        )}
+        
+        {/* For Latest category, display their cards in a grid */}
+        {activeCategory === "Latest" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {allNews
+              .filter(item => item.category === "Latest")
+              .map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))
+            }
+          </div>
+        )}
+        
+        {allNews.filter(item => item.category === activeCategory).length === 0 && 
+         activeCategory !== "Web Stories" && activeCategory !== "Latest" && (
           <div className="text-center py-12">
             <p className="text-gray-500">No articles found in this category.</p>
           </div>
