@@ -15,7 +15,6 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import { useState as useSearchState } from "react";
 import defaultNews from "@/data/newsData";
 
 export function Navbar() {
@@ -132,18 +131,18 @@ export function Navbar() {
 
           <nav className="hidden md:flex items-center space-x-4 text-white">
             <Link to="/" className="px-3 py-2 hover:text-jiohighlight transition-colors">Home</Link>
+            <Link to="/trending" className="px-3 py-2 hover:text-jiohighlight transition-colors">Trending</Link>
+            <Link to="/categories" className="px-3 py-2 hover:text-jiohighlight transition-colors">Categories</Link>
             <Link to="/live-tv" className="px-3 py-2 hover:text-jiohighlight transition-colors flex items-center gap-1">
               <Tv className="h-4 w-4" />
               Live TV
             </Link>
+            <Link to="/premium" className="px-3 py-2 hover:text-jiohighlight transition-colors">Premium</Link>
             {/* Add Shorts link for desktop only */}
             <Link to="/shorts" className="px-3 py-2 hover:text-jiohighlight transition-colors flex items-center gap-1">
               <Film className="h-4 w-4" />
               Shorts
             </Link>
-            <Link to="/trending" className="px-3 py-2 hover:text-jiohighlight transition-colors">Trending</Link>
-            <Link to="/categories" className="px-3 py-2 hover:text-jiohighlight transition-colors">Categories</Link>
-            <Link to="/premium" className="px-3 py-2 hover:text-jiohighlight transition-colors">Premium</Link>
             
             {/* Admin Link - Always visible for quick access */}
             <Link 
@@ -190,23 +189,6 @@ export function Navbar() {
             Home
           </Link>
           <Link 
-            to="/live-tv" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
-            onClick={toggleMenu}
-          >
-            <Tv className="h-4 w-4" />
-            Live TV
-          </Link>
-          {/* For mobile, Shorts is still in the menu */}
-          <Link 
-            to="/shorts" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
-            onClick={toggleMenu}
-          >
-            <Film className="h-4 w-4" />
-            Shorts
-          </Link>
-          <Link 
             to="/trending" 
             className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md"
             onClick={toggleMenu}
@@ -221,11 +203,28 @@ export function Navbar() {
             Categories
           </Link>
           <Link 
+            to="/live-tv" 
+            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
+            onClick={toggleMenu}
+          >
+            <Tv className="h-4 w-4" />
+            Live TV
+          </Link>
+          <Link 
             to="/premium" 
             className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md"
             onClick={toggleMenu}
           >
             Premium
+          </Link>
+          {/* For mobile, Shorts is still in the menu */}
+          <Link 
+            to="/shorts" 
+            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
+            onClick={toggleMenu}
+          >
+            <Film className="h-4 w-4" />
+            Shorts
           </Link>
           
           {/* Admin Link in mobile menu - Always visible */}

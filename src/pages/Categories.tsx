@@ -4,9 +4,11 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building } from "lucide-react";
+import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock } from "lucide-react";
 import defaultNews from "@/data/newsData";
 import { cn } from "@/lib/utils";
+import { WebStoriesSection } from "@/components/WebStoriesSection";
+import { LatestNews } from "@/components/LatestNews";
 
 interface NewsItem {
   id: string;
@@ -20,9 +22,19 @@ interface NewsItem {
   source: string;
 }
 
+interface WebStory {
+  id: string;
+  title: string;
+  imageUrl: string;
+  timeAgo?: string;
+  category?: string;
+}
+
 const Categories = () => {
   const [activeCategory, setActiveCategory] = useState("Latest");
   const [allNews, setAllNews] = useState<NewsItem[]>(defaultNews);
+  const [webStories, setWebStories] = useState<WebStory[]>([]);
+  const [latestNewsItems, setLatestNewsItems] = useState<any[]>([]);
   
   // Load news from localStorage (set by admin panel)
   useEffect(() => {
@@ -72,6 +84,35 @@ const Categories = () => {
     }
   }, []);
   
+  // Generate web stories and latest news based on current category
+  useEffect(() => {
+    // Filter news by active category for web stories
+    const categoryNews = activeCategory === "Latest" 
+      ? allNews.slice(0, 10) 
+      : allNews.filter(item => item.category === activeCategory);
+    
+    // Create web stories from filtered news
+    const storyItems = categoryNews.slice(0, 5).map(item => ({
+      id: `story-${item.id}`,
+      title: item.headline,
+      imageUrl: item.imageUrl,
+      timeAgo: getTimeAgo(new Date(item.date)),
+      category: item.category
+    }));
+    
+    // Create latest news items
+    const latestItems = categoryNews.slice(0, 5).map(item => ({
+      id: item.id,
+      headline: item.headline,
+      timeAgo: getTimeAgo(new Date(item.date)),
+      imageUrl: item.imageUrl,
+      category: item.category
+    }));
+    
+    setWebStories(storyItems);
+    setLatestNewsItems(latestItems);
+  }, [activeCategory, allNews]);
+
   const categoryIcons = {
     Education: Book,
     Health: Heart,
@@ -152,6 +193,26 @@ const Categories = () => {
     }
   };
   
+  // Helper function to calculate time ago
+  function getTimeAgo(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) {
+      return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
+    }
+    if (diffHours > 0) {
+      return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+    }
+    if (diffMins > 0) {
+      return diffMins === 1 ? '1 minute ago' : `${diffMins} minutes ago`;
+    }
+    return 'Just now';
+  }
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -189,6 +250,23 @@ const Categories = () => {
             Latest updates and top stories from {activeCategory.toLowerCase()}
           </p>
         </div>
+        
+        {/* Web Stories Section - show when we have web stories for this category */}
+        {webStories.length > 0 && (
+          <div className="mb-8">
+            <WebStoriesSection stories={webStories} />
+          </div>
+        )}
+
+        {/* Latest News Section - show for all categories */}
+        {latestNewsItems.length > 0 && (
+          <div className="mb-8">
+            <LatestNews 
+              title={`Latest ${activeCategory} Updates`}
+              items={latestNewsItems}
+            />
+          </div>
+        )}
         
         {/* News Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

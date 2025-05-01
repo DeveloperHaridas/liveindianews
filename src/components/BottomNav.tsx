@@ -1,5 +1,5 @@
 
-import { Home, Tv, MessageSquare, BookOpen, Play } from "lucide-react";
+import { Home, Tv, BookOpen, Play, TrendingUp } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export function BottomNav() {
@@ -15,17 +15,17 @@ export function BottomNav() {
         <Home className={`h-5 w-5 ${isActive('/') ? 'text-jiohighlight' : 'text-gray-600'}`} />
         <span className={`text-xs ${isActive('/') ? 'text-jiohighlight' : 'text-gray-600'}`}>Home</span>
       </Link>
-      <Link to="/live-tv" className="flex flex-col items-center py-1 px-3">
-        <Tv className={`h-5 w-5 ${isActive('/live-tv') ? 'text-jiohighlight' : 'text-gray-600'}`} />
-        <span className={`text-xs ${isActive('/live-tv') ? 'text-jiohighlight' : 'text-gray-600'}`}>Live TV</span>
-      </Link>
       <Link to="/trending" className="flex flex-col items-center py-1 px-3">
-        <MessageSquare className={`h-5 w-5 ${isActive('/trending') ? 'text-jiohighlight' : 'text-gray-600'}`} />
-        <span className={`text-xs ${isActive('/trending') ? 'text-jiohighlight' : 'text-gray-600'}`}>Headlines</span>
+        <TrendingUp className={`h-5 w-5 ${isActive('/trending') ? 'text-jiohighlight' : 'text-gray-600'}`} />
+        <span className={`text-xs ${isActive('/trending') ? 'text-jiohighlight' : 'text-gray-600'}`}>Trending</span>
       </Link>
       <Link to="/categories" className="flex flex-col items-center py-1 px-3">
         <BookOpen className={`h-5 w-5 ${isActive('/categories') ? 'text-jiohighlight' : 'text-gray-600'}`} />
-        <span className={`text-xs ${isActive('/categories') ? 'text-jiohighlight' : 'text-gray-600'}`}>Mags</span>
+        <span className={`text-xs ${isActive('/categories') ? 'text-jiohighlight' : 'text-gray-600'}`}>Categories</span>
+      </Link>
+      <Link to="/live-tv" className="flex flex-col items-center py-1 px-3">
+        <Tv className={`h-5 w-5 ${isActive('/live-tv') ? 'text-jiohighlight' : 'text-gray-600'}`} />
+        <span className={`text-xs ${isActive('/live-tv') ? 'text-jiohighlight' : 'text-gray-600'}`}>Live TV</span>
       </Link>
       <Link to="/shorts" className="flex flex-col items-center py-1 px-3">
         <Play className={`h-5 w-5 ${isActive('/shorts') ? 'text-jiohighlight' : 'text-gray-600'}`} />
