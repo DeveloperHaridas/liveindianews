@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock } from "lucide-react";
+import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock, Video } from "lucide-react";
 import defaultNews from "@/data/newsData";
 import { cn } from "@/lib/utils";
 import { WebStoriesSection } from "@/components/WebStoriesSection";
@@ -35,6 +34,7 @@ const Categories = () => {
   const [allNews, setAllNews] = useState<NewsItem[]>(defaultNews);
   const [webStories, setWebStories] = useState<WebStory[]>([]);
   const [latestNewsItems, setLatestNewsItems] = useState<any[]>([]);
+  const [videoNews, setVideoNews] = useState<any[]>([]);
   
   // Load news from localStorage (set by admin panel)
   useEffect(() => {
@@ -69,30 +69,49 @@ const Categories = () => {
       }
     };
     
+    // Load video news
+    const loadVideoNews = () => {
+      const videoNewsData = localStorage.getItem("videoNewsData");
+      
+      if (videoNewsData) {
+        try {
+          setVideoNews(JSON.parse(videoNewsData));
+        } catch (error) {
+          console.error("Error parsing video news data:", error);
+          setVideoNews([]);
+        }
+      }
+    };
+    
     // Initial load
     loadNews();
+    loadVideoNews();
     
     // Listen for storage changes (when admin updates news)
-    window.addEventListener("storage", loadNews);
+    window.addEventListener("storage", () => {
+      loadNews();
+      loadVideoNews();
+    });
     
     // Also add a custom event listener for direct updates
     window.addEventListener("newsUpdated", loadNews);
+    window.addEventListener("videoNewsUpdated", loadVideoNews);
     
     return () => {
       window.removeEventListener("storage", loadNews);
       window.removeEventListener("newsUpdated", loadNews);
+      window.removeEventListener("videoNewsUpdated", loadVideoNews);
     }
   }, []);
   
   // Generate web stories and latest news based on current category
   useEffect(() => {
-    // Filter news by active category for web stories
-    const categoryNews = activeCategory === "Latest" 
-      ? allNews.slice(0, 10) 
-      : allNews.filter(item => item.category === activeCategory);
+    // Create web stories from news with "Web Stories" category
+    const webStoriesNews = activeCategory === "Web Stories" 
+      ? allNews.filter(item => item.category === "Web Stories")
+      : allNews.filter(item => item.category === "Web Stories").slice(0, 5);
     
-    // Create web stories from filtered news
-    const storyItems = categoryNews.slice(0, 5).map(item => ({
+    const storyItems = webStoriesNews.map(item => ({
       id: `story-${item.id}`,
       title: item.headline,
       imageUrl: item.imageUrl,
@@ -100,8 +119,12 @@ const Categories = () => {
       category: item.category
     }));
     
-    // Create latest news items
-    const latestItems = categoryNews.slice(0, 5).map(item => ({
+    // Create latest news items from "Latest" category
+    const latestNews = activeCategory === "Latest" 
+      ? allNews.filter(item => item.category === "Latest")
+      : allNews.filter(item => item.category === "Latest").slice(0, 5);
+    
+    const latestItems = latestNews.map(item => ({
       id: item.id,
       headline: item.headline,
       timeAgo: getTimeAgo(new Date(item.date)),
@@ -128,33 +151,50 @@ const Categories = () => {
   const getUniqueCategories = () => {
     const defaultCategories = [
       "Latest",
+      "Web Stories",
       "India",
       "World",
       "Education",
       "Health",
       "Lifestyle",
-      "City",
-      "Web Stories"
+      "City"
     ];
     
     // Get unique categories from news items
     const newsCategories = Array.from(new Set(allNews.map(item => item.category)));
     
-    return [
+    // Get video categories
+    const videoCategories = Array.from(new Set(videoNews.map(item => item.category)));
+    
+    // Combine all categories
+    return Array.from(new Set([
       ...defaultCategories,
-      ...newsCategories.filter(cat => 
-        !defaultCategories.includes(cat)
-      )
-    ];
+      ...newsCategories,
+      ...videoCategories
+    ]));
   };
   
   const categories = getUniqueCategories();
   
   // Filter news by active category
-  const filteredNews = activeCategory === "Latest" 
-    ? allNews.slice(0, 10) 
-    : allNews.filter(item => item.category === activeCategory);
+  const getFilteredContent = () => {
+    if (activeCategory === "Latest") {
+      return allNews.filter(item => item.category === "Latest");
+    } else if (activeCategory === "Web Stories") {
+      return allNews.filter(item => item.category === "Web Stories");
+    } else {
+      return allNews.filter(item => item.category === activeCategory);
+    }
+  };
   
+  const filteredNews = getFilteredContent();
+  
+  // Filter videos by active category
+  const filteredVideos = videoNews.filter(video => 
+    video.category === activeCategory
+  );
+  
+  // Get category color based on category name
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
       case 'education': return 'bg-blue-500';
@@ -174,6 +214,7 @@ const Categories = () => {
     }
   };
   
+  // Get category hover color based on category name
   const getCategoryHoverColor = (category: string): string => {
     switch(category.toLowerCase()) {
       case 'education': return 'hover:bg-blue-500 hover:text-white';
@@ -251,42 +292,91 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Web Stories Section - show when we have web stories for this category */}
-        {webStories.length > 0 && (
+        {/* Web Stories Section - show prominently for Web Stories category */}
+        {activeCategory === "Web Stories" ? (
+          <div className="mb-8">
+            <WebStoriesSection stories={webStories} />
+          </div>
+        ) : webStories.length > 0 && (
           <div className="mb-8">
             <WebStoriesSection stories={webStories} />
           </div>
         )}
 
-        {/* Latest News Section - show for all categories */}
-        {latestNewsItems.length > 0 && (
+        {/* Latest News Section - show prominently for Latest category */}
+        {activeCategory === "Latest" ? (
+          <div className="mb-8">
+            <LatestNews 
+              title="Latest Updates"
+              items={latestNewsItems}
+            />
+          </div>
+        ) : latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
           <div className="mb-8">
             <LatestNews 
               title={`Latest ${activeCategory} Updates`}
-              items={latestNewsItems}
+              items={latestNewsItems.filter(item => item.category === activeCategory)}
             />
           </div>
         )}
         
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.map(item => (
-            <NewsCard
-              key={item.id}
-              id={item.id}
-              headline={item.headline}
-              summary={item.summary}
-              category={item.category}
-              imageUrl={item.imageUrl}
-              isPremium={item.isPremium}
-              source={item.source}
-            />
-          ))}
-        </div>
+        {/* Video News Section - show for any category that has videos */}
+        {filteredVideos.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Video className="h-5 w-5 text-jiohighlight" />
+              {activeCategory} Videos
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredVideos.map((video) => (
+                <div key={video.id} className="bg-gray-50 rounded-lg overflow-hidden">
+                  <div className="relative">
+                    <img 
+                      src={video.thumbnailUrl} 
+                      alt={video.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      {video.duration}
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-medium line-clamp-2">{video.title}</h3>
+                    <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
+                      <span>{video.source || video.category}</span>
+                      <span>{getTimeAgo(new Date(video.date))}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
-        {filteredNews.length === 0 && (
+        {/* News Grid - show for all categories */}
+        {filteredNews.length > 0 && (
+          <>
+            <h2 className="text-xl font-bold mb-4">{activeCategory} Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredNews.map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))}
+            </div>
+          </>
+        )}
+        
+        {filteredNews.length === 0 && filteredVideos.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No articles found in this category.</p>
+            <p className="text-gray-500">No content found in this category.</p>
           </div>
         )}
         
