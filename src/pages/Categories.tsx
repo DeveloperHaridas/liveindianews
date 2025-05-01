@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -9,7 +8,6 @@ import defaultNews from "@/data/newsData";
 import { cn } from "@/lib/utils";
 import { WebStoriesSection } from "@/components/WebStoriesSection";
 import { LatestNews } from "@/components/LatestNews";
-import { BottomNav } from "@/components/BottomNav";
 
 interface NewsItem {
   id: string;
@@ -64,19 +62,10 @@ const Categories = () => {
             ...defaultNews.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
           ];
           
-          // Sort combined news by date (newest first)
-          combinedNews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          
           setAllNews(combinedNews);
         } catch (error) {
           console.error("Error parsing admin news data:", error);
         }
-      } else {
-        // Sort default news by date (newest first)
-        const sortedNews = [...defaultNews].sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-        setAllNews(sortedNews);
       }
     };
     
@@ -86,10 +75,7 @@ const Categories = () => {
       
       if (videoNewsData) {
         try {
-          const videos = JSON.parse(videoNewsData);
-          // Sort video news by date (newest first)
-          videos.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          setVideoNews(videos);
+          setVideoNews(JSON.parse(videoNewsData));
         } catch (error) {
           console.error("Error parsing video news data:", error);
           setVideoNews([]);
@@ -121,7 +107,9 @@ const Categories = () => {
   // Generate web stories and latest news based on current category
   useEffect(() => {
     // Create web stories from news with "Web Stories" category
-    const webStoriesNews = allNews.filter(item => item.category === "Web Stories");
+    const webStoriesNews = activeCategory === "Web Stories" 
+      ? allNews.filter(item => item.category === "Web Stories")
+      : allNews.filter(item => item.category === "Web Stories").slice(0, 5);
     
     const storyItems = webStoriesNews.map(item => ({
       id: `story-${item.id}`,
@@ -132,7 +120,9 @@ const Categories = () => {
     }));
     
     // Create latest news items from "Latest" category
-    const latestNews = allNews.filter(item => item.category === "Latest");
+    const latestNews = activeCategory === "Latest" 
+      ? allNews.filter(item => item.category === "Latest")
+      : allNews.filter(item => item.category === "Latest").slice(0, 5);
     
     const latestItems = latestNews.map(item => ({
       id: item.id,
@@ -144,7 +134,7 @@ const Categories = () => {
     
     setWebStories(storyItems);
     setLatestNewsItems(latestItems);
-  }, [allNews]);
+  }, [activeCategory, allNews]);
 
   const categoryIcons = {
     Education: Book,
@@ -302,21 +292,18 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Web Stories Section - always show for Web Stories category */}
+        {/* Web Stories Section - show prominently for Web Stories category */}
         {activeCategory === "Web Stories" ? (
           <div className="mb-8">
             <WebStoriesSection stories={webStories} />
           </div>
-        ) : (
-          // Show web stories section in other categories too (similar to home page)
-          webStories.length > 0 && (
-            <div className="mb-8">
-              <WebStoriesSection stories={webStories.slice(0, 5)} />
-            </div>
-          )
+        ) : webStories.length > 0 && (
+          <div className="mb-8">
+            <WebStoriesSection stories={webStories} />
+          </div>
         )}
 
-        {/* Latest News Section - always show for Latest category */}
+        {/* Latest News Section - show prominently for Latest category */}
         {activeCategory === "Latest" ? (
           <div className="mb-8">
             <LatestNews 
@@ -324,19 +311,13 @@ const Categories = () => {
               items={latestNewsItems}
             />
           </div>
-        ) : (
-          // Show latest news section in other categories too (similar to home page)
-          latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
-            <div className="mb-8">
-              <LatestNews 
-                title={`Latest ${activeCategory} Updates`}
-                items={latestNewsItems.filter(item => item.category === activeCategory).length > 0 
-                  ? latestNewsItems.filter(item => item.category === activeCategory)
-                  : latestNewsItems.slice(0, 3) // Show some latest news if no category-specific news
-                }
-              />
-            </div>
-          )
+        ) : latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
+          <div className="mb-8">
+            <LatestNews 
+              title={`Latest ${activeCategory} Updates`}
+              items={latestNewsItems.filter(item => item.category === activeCategory)}
+            />
+          </div>
         )}
         
         {/* Video News Section - show for any category that has videos */}
@@ -403,7 +384,6 @@ const Categories = () => {
       </main>
       
       <Footer />
-      <BottomNav />
     </div>
   );
 };
