@@ -25,12 +25,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle, Edit, Trash2, Video, Upload, Filter } from "lucide-react";
-import news from "@/data/newsData";
-
-// Extract all available categories from news data plus special categories
-const availableCategories = Array.from(
-  new Set([...news.map(item => item.category), "Latest", "Web Stories"])
-).sort();
 
 // Sample video news data
 const sampleVideoNews = [
@@ -63,27 +57,6 @@ const sampleVideoNews = [
     videoUrl: "https://example.com/video3.mp4",
     date: "2025-04-23",
     source: "Sports Network"
-  },
-  // Add sample videos for Latest and Web Stories categories
-  { 
-    id: "4", 
-    title: "Latest: Breaking News Update", 
-    category: "Latest",
-    duration: "2:30",
-    thumbnailUrl: "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    videoUrl: "https://example.com/video4.mp4",
-    date: "2025-04-25",
-    source: "JioNews"
-  },
-  { 
-    id: "5", 
-    title: "Web Story: Visual Experience", 
-    category: "Web Stories",
-    duration: "1:45",
-    thumbnailUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    videoUrl: "https://example.com/video5.mp4",
-    date: "2025-04-24",
-    source: "JioNews"
   },
 ];
 
@@ -358,7 +331,7 @@ export function VideoNewsManagement() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all-categories">All categories</SelectItem>
-                  {availableCategories.map((category) => (
+                  {uniqueCategories.map((category) => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
                 </SelectContent>
@@ -527,10 +500,6 @@ function VideoForm({ onSubmit, isEditing, initialData }: VideoFormProps) {
     setFormData({ ...formData, [name]: value });
   };
   
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData({ ...formData, [name]: value });
-  };
-  
   const handleThumbnailSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -589,20 +558,14 @@ function VideoForm({ onSubmit, isEditing, initialData }: VideoFormProps) {
           
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select 
+            <Input
+              id="category"
               name="category"
               value={formData.category}
-              onValueChange={(value) => handleSelectChange('category', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableCategories.map((category) => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={handleChange}
+              required
+              placeholder="Politics, Sports, etc."
+            />
           </div>
         </div>
         

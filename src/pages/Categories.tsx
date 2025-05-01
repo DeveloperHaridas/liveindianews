@@ -1,13 +1,15 @@
+
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
-import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock, Video } from "lucide-react";
+import { Book, Heart, Zap, Flag, Globe, Leaf, Newspaper, Building, Clock, Film } from "lucide-react";
 import defaultNews from "@/data/newsData";
 import { cn } from "@/lib/utils";
 import { WebStoriesSection } from "@/components/WebStoriesSection";
 import { LatestNews } from "@/components/LatestNews";
+import { BottomNav } from "@/components/BottomNav";
 
 interface NewsItem {
   id: string;
@@ -34,7 +36,6 @@ const Categories = () => {
   const [allNews, setAllNews] = useState<NewsItem[]>(defaultNews);
   const [webStories, setWebStories] = useState<WebStory[]>([]);
   const [latestNewsItems, setLatestNewsItems] = useState<any[]>([]);
-  const [videoNews, setVideoNews] = useState<any[]>([]);
   
   // Load news from localStorage (set by admin panel)
   useEffect(() => {
@@ -69,68 +70,110 @@ const Categories = () => {
       }
     };
     
-    // Load video news
-    const loadVideoNews = () => {
-      const videoNewsData = localStorage.getItem("videoNewsData");
-      
-      if (videoNewsData) {
-        try {
-          setVideoNews(JSON.parse(videoNewsData));
-        } catch (error) {
-          console.error("Error parsing video news data:", error);
-          setVideoNews([]);
-        }
-      }
-    };
-    
     // Initial load
     loadNews();
-    loadVideoNews();
     
     // Listen for storage changes (when admin updates news)
-    window.addEventListener("storage", () => {
-      loadNews();
-      loadVideoNews();
-    });
+    window.addEventListener("storage", loadNews);
     
     // Also add a custom event listener for direct updates
     window.addEventListener("newsUpdated", loadNews);
-    window.addEventListener("videoNewsUpdated", loadVideoNews);
     
     return () => {
       window.removeEventListener("storage", loadNews);
       window.removeEventListener("newsUpdated", loadNews);
-      window.removeEventListener("videoNewsUpdated", loadVideoNews);
     }
   }, []);
   
   // Generate web stories and latest news based on current category
   useEffect(() => {
-    // Create web stories from news with "Web Stories" category
-    const webStoriesNews = activeCategory === "Web Stories" 
-      ? allNews.filter(item => item.category === "Web Stories")
-      : allNews.filter(item => item.category === "Web Stories").slice(0, 5);
+    // For Web Stories category, show all web stories
+    if (activeCategory === "Web Stories") {
+      // Filter all news items that are web stories
+      const webStoriesNews = allNews.filter(item => item.category === "Web Stories");
+      
+      const storyItems = webStoriesNews.map(item => ({
+        id: item.id,
+        title: item.headline,
+        imageUrl: item.imageUrl,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        category: item.category
+      }));
+      
+      setWebStories(storyItems);
+      
+      // Also display some latest news items when in Web Stories category
+      const latestItems = allNews
+        .filter(item => item.category === "Latest")
+        .slice(0, 5)
+        .map(item => ({
+          id: item.id,
+          headline: item.headline,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          imageUrl: item.imageUrl,
+          category: "Latest"
+        }));
+      
+      setLatestNewsItems(latestItems);
+      return;
+    } 
     
-    const storyItems = webStoriesNews.map(item => ({
-      id: `story-${item.id}`,
-      title: item.headline,
-      imageUrl: item.imageUrl,
-      timeAgo: getTimeAgo(new Date(item.date)),
-      category: item.category
-    }));
+    if (activeCategory === "Latest") {
+      // Filter all news items that are latest news
+      const latestNews = allNews.filter(item => item.category === "Latest");
+      
+      const latestItems = latestNews.map(item => ({
+        id: item.id,
+        headline: item.headline,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        imageUrl: item.imageUrl,
+        category: item.category
+      }));
+      
+      setLatestNewsItems(latestItems);
+      
+      // Also create web stories for the Latest category
+      const storyItems = allNews
+        .filter(item => item.category === "Web Stories")
+        .slice(0, 5)
+        .map(item => ({
+          id: `story-${item.id}`,
+          title: item.headline,
+          imageUrl: item.imageUrl,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          category: "Web Stories"
+        }));
+      
+      setWebStories(storyItems);
+      return;
+    }
     
-    // Create latest news items from "Latest" category
-    const latestNews = activeCategory === "Latest" 
-      ? allNews.filter(item => item.category === "Latest")
-      : allNews.filter(item => item.category === "Latest").slice(0, 5);
+    // For other categories, filter by that category
+    const categoryNews = allNews.filter(item => item.category === activeCategory);
     
-    const latestItems = latestNews.map(item => ({
-      id: item.id,
-      headline: item.headline,
-      timeAgo: getTimeAgo(new Date(item.date)),
-      imageUrl: item.imageUrl,
-      category: item.category
-    }));
+    // Create web stories from filtered news
+    const storyItems = allNews
+      .filter(item => item.category === "Web Stories")
+      .slice(0, 5)
+      .map(item => ({
+        id: `story-${item.id}`,
+        title: item.headline,
+        imageUrl: item.imageUrl,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        category: "Web Stories"
+      }));
+    
+    // Create latest news items from the Latest category
+    const latestItems = allNews
+      .filter(item => item.category === "Latest")
+      .slice(0, 5)
+      .map(item => ({
+        id: item.id,
+        headline: item.headline,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        imageUrl: item.imageUrl,
+        category: "Latest"
+      }));
     
     setWebStories(storyItems);
     setLatestNewsItems(latestItems);
@@ -145,11 +188,12 @@ const Categories = () => {
     Lifestyle: Leaf,
     "Web Stories": Newspaper,
     City: Building,
+    Shorts: Film,
   };
   
   // Get unique categories from combined news sources
   const getUniqueCategories = () => {
-    const defaultCategories = [
+    const baseCategories = [
       "Latest",
       "Web Stories",
       "India",
@@ -163,38 +207,23 @@ const Categories = () => {
     // Get unique categories from news items
     const newsCategories = Array.from(new Set(allNews.map(item => item.category)));
     
-    // Get video categories
-    const videoCategories = Array.from(new Set(videoNews.map(item => item.category)));
-    
-    // Combine all categories
-    return Array.from(new Set([
-      ...defaultCategories,
-      ...newsCategories,
-      ...videoCategories
-    ]));
+    return [
+      ...baseCategories,
+      ...newsCategories.filter(cat => 
+        !baseCategories.includes(cat)
+      )
+    ];
   };
   
   const categories = getUniqueCategories();
   
   // Filter news by active category
-  const getFilteredContent = () => {
-    if (activeCategory === "Latest") {
-      return allNews.filter(item => item.category === "Latest");
-    } else if (activeCategory === "Web Stories") {
-      return allNews.filter(item => item.category === "Web Stories");
-    } else {
-      return allNews.filter(item => item.category === activeCategory);
-    }
-  };
+  const filteredNews = activeCategory === "Latest" 
+    ? allNews.filter(item => item.category === "Latest")
+    : activeCategory === "Web Stories"
+      ? allNews.filter(item => item.category === "Web Stories")
+      : allNews.filter(item => item.category === activeCategory);
   
-  const filteredNews = getFilteredContent();
-  
-  // Filter videos by active category
-  const filteredVideos = videoNews.filter(video => 
-    video.category === activeCategory
-  );
-  
-  // Get category color based on category name
   const getCategoryColor = (category: string): string => {
     switch(category.toLowerCase()) {
       case 'education': return 'bg-blue-500';
@@ -214,7 +243,6 @@ const Categories = () => {
     }
   };
   
-  // Get category hover color based on category name
   const getCategoryHoverColor = (category: string): string => {
     switch(category.toLowerCase()) {
       case 'education': return 'hover:bg-blue-500 hover:text-white';
@@ -292,73 +320,29 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Web Stories Section - show prominently for Web Stories category */}
-        {activeCategory === "Web Stories" ? (
-          <div className="mb-8">
-            <WebStoriesSection stories={webStories} />
-          </div>
-        ) : webStories.length > 0 && (
+        {/* Web Stories Section - always show for all categories */}
+        {webStories.length > 0 && (
           <div className="mb-8">
             <WebStoriesSection stories={webStories} />
           </div>
         )}
 
-        {/* Latest News Section - show prominently for Latest category */}
-        {activeCategory === "Latest" ? (
+        {/* Latest News Section - always show for all categories */}
+        {latestNewsItems.length > 0 && (
           <div className="mb-8">
             <LatestNews 
-              title="Latest Updates"
+              title={activeCategory === "Latest" ? "Latest Updates" : "Latest News Updates"}
               items={latestNewsItems}
             />
           </div>
-        ) : latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
-          <div className="mb-8">
-            <LatestNews 
-              title={`Latest ${activeCategory} Updates`}
-              items={latestNewsItems.filter(item => item.category === activeCategory)}
-            />
-          </div>
         )}
         
-        {/* Video News Section - show for any category that has videos */}
-        {filteredVideos.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Video className="h-5 w-5 text-jiohighlight" />
-              {activeCategory} Videos
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredVideos.map((video) => (
-                <div key={video.id} className="bg-gray-50 rounded-lg overflow-hidden">
-                  <div className="relative">
-                    <img 
-                      src={video.thumbnailUrl} 
-                      alt={video.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      {video.duration}
-                    </div>
-                  </div>
-                  <div className="p-3">
-                    <h3 className="font-medium line-clamp-2">{video.title}</h3>
-                    <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
-                      <span>{video.source || video.category}</span>
-                      <span>{getTimeAgo(new Date(video.date))}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* News Grid - show for all categories */}
-        {filteredNews.length > 0 && (
-          <>
-            <h2 className="text-xl font-bold mb-4">{activeCategory} Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredNews.map(item => (
+        {/* News Grid - only show for the active category */}
+        {activeCategory !== "Web Stories" && activeCategory !== "Latest" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {allNews
+              .filter(item => item.category === activeCategory)
+              .map(item => (
                 <NewsCard
                   key={item.id}
                   id={item.id}
@@ -369,14 +353,57 @@ const Categories = () => {
                   isPremium={item.isPremium}
                   source={item.source}
                 />
-              ))}
-            </div>
-          </>
+              ))
+            }
+          </div>
         )}
         
-        {filteredNews.length === 0 && filteredVideos.length === 0 && (
+        {/* For Web Stories category, display their cards in a grid */}
+        {activeCategory === "Web Stories" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {allNews
+              .filter(item => item.category === "Web Stories")
+              .map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))
+            }
+          </div>
+        )}
+        
+        {/* For Latest category, display their cards in a grid */}
+        {activeCategory === "Latest" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {allNews
+              .filter(item => item.category === "Latest")
+              .map(item => (
+                <NewsCard
+                  key={item.id}
+                  id={item.id}
+                  headline={item.headline}
+                  summary={item.summary}
+                  category={item.category}
+                  imageUrl={item.imageUrl}
+                  isPremium={item.isPremium}
+                  source={item.source}
+                />
+              ))
+            }
+          </div>
+        )}
+        
+        {allNews.filter(item => item.category === activeCategory).length === 0 && 
+         activeCategory !== "Web Stories" && activeCategory !== "Latest" && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No content found in this category.</p>
+            <p className="text-gray-500">No articles found in this category.</p>
           </div>
         )}
         
@@ -384,6 +411,7 @@ const Categories = () => {
       </main>
       
       <Footer />
+      <BottomNav />
     </div>
   );
 };
