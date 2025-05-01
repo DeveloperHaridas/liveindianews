@@ -7,7 +7,6 @@ import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/ui/use-toast";
-import { BottomNav } from "@/components/BottomNav"; 
 
 const Admin = () => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -43,7 +42,6 @@ const Admin = () => {
       </main>
 
       <Footer />
-      <BottomNav />
     </div>
   );
 };
