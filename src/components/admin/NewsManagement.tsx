@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -27,9 +28,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle, Edit, Trash2, Upload, Filter } from "lucide-react";
 import news from "@/data/newsData";
 
-// Extract all unique categories from the news data and add "Latest" and "Web Stories"
+// Extract all unique categories from the news data
 const availableCategories = Array.from(
-  new Set([...news.map(item => item.category), "Latest", "Web Stories"])
+  new Set(news.map(item => item.category))
 ).sort();
 
 // Sample news data
@@ -42,27 +43,6 @@ const sampleNews = news.slice(0, 5).map(item => ({
   content: item.content || "",
   imageUrl: item.imageUrl
 }));
-
-// Add some sample Latest and Web Stories news
-sampleNews.push({
-  id: 1001,
-  title: "Breaking News: Latest Update",
-  source: "JioNews",
-  category: "Latest",
-  date: new Date().toISOString().split('T')[0],
-  content: "This is a sample latest news article for demonstration purposes.",
-  imageUrl: "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-});
-
-sampleNews.push({
-  id: 1002,
-  title: "Web Story: Visual Journey",
-  source: "JioNews",
-  category: "Web Stories",
-  date: new Date().toISOString().split('T')[0],
-  content: "This is a sample web story for demonstration purposes.",
-  imageUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-});
 
 interface NewsItem {
   id: number;
