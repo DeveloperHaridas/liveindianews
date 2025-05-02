@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, Menu, User, Tv, Lock, ShieldCheck, Film } from "lucide-react";
+import { Search, Menu, User, Tv, ShieldCheck, Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -138,13 +138,11 @@ export function Navbar() {
               Live TV
             </Link>
             <Link to="/premium" className="px-3 py-2 hover:text-jiohighlight transition-colors">Premium</Link>
-            {/* Add Shorts link for desktop only */}
             <Link to="/shorts" className="px-3 py-2 hover:text-jiohighlight transition-colors flex items-center gap-1">
               <Film className="h-4 w-4" />
               Shorts
             </Link>
             
-            {/* Admin Link - Always visible for quick access */}
             <Link 
               to="/admin" 
               className="px-3 py-2 bg-jiohighlight hover:bg-opacity-80 text-white rounded-md flex items-center gap-1 transition-colors"
@@ -176,35 +174,36 @@ export function Navbar() {
         </div>
       </div>
       
+      {/* Mobile menu - Updated to position on left side */}
       <div className={cn(
-        "md:hidden bg-jioblue-light absolute w-full transition-all duration-300 ease-in-out",
-        isMenuOpen ? "max-h-64 py-2" : "max-h-0 py-0 overflow-hidden"
+        "md:hidden bg-jioblue absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out",
+        isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="container mx-auto px-4 space-y-2">
+        <div className="p-4 space-y-4">
           <Link 
             to="/" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md"
+            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
             onClick={toggleMenu}
           >
             Home
           </Link>
           <Link 
             to="/trending" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md"
+            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
             onClick={toggleMenu}
           >
             Trending
           </Link>
           <Link 
             to="/categories" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md"
+            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
             onClick={toggleMenu}
           >
             Categories
           </Link>
           <Link 
             to="/live-tv" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
+            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md flex items-center gap-2"
             onClick={toggleMenu}
           >
             <Tv className="h-4 w-4" />
@@ -212,22 +211,20 @@ export function Navbar() {
           </Link>
           <Link 
             to="/premium" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md"
+            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
             onClick={toggleMenu}
           >
             Premium
           </Link>
-          {/* For mobile, Shorts is still in the menu */}
           <Link 
             to="/shorts" 
-            className="block px-3 py-2 text-white hover:bg-jioblue transition-colors rounded-md flex items-center gap-2"
+            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md flex items-center gap-2"
             onClick={toggleMenu}
           >
             <Film className="h-4 w-4" />
             Shorts
           </Link>
           
-          {/* Admin Link in mobile menu - Always visible */}
           <Link 
             to="/admin" 
             className="block px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2"
@@ -238,6 +235,14 @@ export function Navbar() {
           </Link>
         </div>
       </div>
+
+      {/* Add overlay when menu is open */}
+      {isMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" 
+          onClick={toggleMenu}
+        />
+      )}
 
       {/* Search Command Dialog */}
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -275,3 +280,4 @@ export function Navbar() {
     </header>
   );
 }
+
