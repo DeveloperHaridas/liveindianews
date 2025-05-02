@@ -51,7 +51,7 @@ const Categories = () => {
             content: item.content,
             category: item.category,
             imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-            isPremium: false,
+            isPremium: item.category === "Premium",
             date: item.date,
             source: item.source || item.category // Ensure source exists
           }));
@@ -61,6 +61,13 @@ const Categories = () => {
             ...adminNews, 
             ...defaultNews.filter(d => !adminNews.find((a: any) => String(a.id) === d.id))
           ];
+          
+          // Sort by date, newest first
+          combinedNews.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB.getTime() - dateA.getTime();
+          });
           
           setAllNews(combinedNews);
         } catch (error) {
@@ -87,18 +94,41 @@ const Categories = () => {
   // Generate web stories and latest news based on current category
   useEffect(() => {
     // Filter news by active category for web stories
-    const categoryNews = activeCategory === "Latest" 
-      ? allNews.slice(0, 10) 
-      : allNews.filter(item => item.category === activeCategory);
+    let categoryNews;
+    
+    if (activeCategory === "Latest") {
+      categoryNews = allNews.slice(0, 10);
+    } else if (activeCategory === "Web Stories") {
+      // For Web Stories tab, get all Web Stories category articles
+      categoryNews = allNews.filter(item => item.category === "Web Stories");
+    } else {
+      categoryNews = allNews.filter(item => item.category === activeCategory);
+    }
     
     // Create web stories from filtered news
-    const storyItems = categoryNews.slice(0, 5).map(item => ({
-      id: `story-${item.id}`,
-      title: item.headline,
-      imageUrl: item.imageUrl,
-      timeAgo: getTimeAgo(new Date(item.date)),
-      category: item.category
-    }));
+    let storyItems;
+    
+    if (activeCategory === "Web Stories") {
+      // If on Web Stories tab, show all Web Stories category articles
+      storyItems = allNews
+        .filter(item => item.category === "Web Stories")
+        .map(item => ({
+          id: `story-${item.id}`,
+          title: item.headline,
+          imageUrl: item.imageUrl,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          category: item.category
+        }));
+    } else {
+      // For other tabs, just show 5
+      storyItems = categoryNews.slice(0, 5).map(item => ({
+        id: `story-${item.id}`,
+        title: item.headline,
+        imageUrl: item.imageUrl,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        category: item.category
+      }));
+    }
     
     // Create latest news items
     const latestItems = categoryNews.slice(0, 5).map(item => ({
@@ -122,6 +152,7 @@ const Categories = () => {
     Lifestyle: Leaf,
     "Web Stories": Newspaper,
     City: Building,
+    Premium: Clock,
   };
   
   // Get unique categories from combined news sources
@@ -134,7 +165,8 @@ const Categories = () => {
       "Health",
       "Lifestyle",
       "City",
-      "Web Stories"
+      "Web Stories",
+      "Premium"
     ];
     
     // Get unique categories from news items
@@ -251,15 +283,15 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Web Stories Section - show when we have web stories for this category */}
-        {webStories.length > 0 && (
+        {/* Web Stories Section - show when we have web stories for this category or on Web Stories tab */}
+        {(webStories.length > 0 || activeCategory === "Web Stories") && (
           <div className="mb-8">
             <WebStoriesSection stories={webStories} />
           </div>
         )}
 
         {/* Latest News Section - show for all categories */}
-        {latestNewsItems.length > 0 && (
+        {latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
           <div className="mb-8">
             <LatestNews 
               title={`Latest ${activeCategory} Updates`}
@@ -268,25 +300,33 @@ const Categories = () => {
           </div>
         )}
         
-        {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.map(item => (
-            <NewsCard
-              key={item.id}
-              id={item.id}
-              headline={item.headline}
-              summary={item.summary}
-              category={item.category}
-              imageUrl={item.imageUrl}
-              isPremium={item.isPremium}
-              source={item.source}
-            />
-          ))}
-        </div>
+        {/* News Grid - Don't show for Web Stories tab */}
+        {activeCategory !== "Web Stories" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredNews.map(item => (
+              <NewsCard
+                key={item.id}
+                id={item.id}
+                headline={item.headline}
+                summary={item.summary}
+                category={item.category}
+                imageUrl={item.imageUrl}
+                isPremium={item.isPremium}
+                source={item.source}
+              />
+            ))}
+          </div>
+        )}
         
-        {filteredNews.length === 0 && (
+        {filteredNews.length === 0 && activeCategory !== "Web Stories" && (
           <div className="text-center py-12">
             <p className="text-gray-500">No articles found in this category.</p>
+          </div>
+        )}
+        
+        {webStories.length === 0 && activeCategory === "Web Stories" && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No web stories found.</p>
           </div>
         )}
         

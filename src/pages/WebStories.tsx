@@ -54,28 +54,53 @@ const WebStories = () => {
   useEffect(() => {
     // Generate web stories based on news data and additional stories
     const generateStories = () => {
-      // Create stories from existing news
-      const newsStories = defaultNews.slice(0, 5).map((item, index) => ({
-        id: `story-${item.id}`,
-        title: item.headline,
-        imageUrl: item.imageUrl,
-        timeAgo: getTimeAgo(new Date(item.date)),
-        category: item.category,
-        content: [
-          "This is the first page of the web story.",
-          "Here's some more interesting information about this story.",
-          "Final thoughts and conclusion about this topic."
-        ]
-      }));
+      // Load admin-added news data
+      const adminNewsData = localStorage.getItem("adminNewsData");
+      let adminNews: any[] = [];
       
-      // Add additional stories with placeholder images
+      if (adminNewsData) {
+        try {
+          // Filter to only get Web Stories category news
+          adminNews = JSON.parse(adminNewsData)
+            .filter((item: any) => item.category === "Web Stories")
+            .map((item: any) => ({
+              id: `story-${item.id}`,
+              title: item.title,
+              imageUrl: item.imageUrl || placeholderImages[0],
+              timeAgo: getTimeAgo(new Date(item.date)),
+              category: item.category,
+              content: item.content ? [item.content] : ["No content available"]
+            }));
+        } catch (error) {
+          console.error("Error parsing admin news data:", error);
+        }
+      }
+      
+      // Create stories from existing news
+      const newsStories = defaultNews
+        .filter(item => item.category === "Web Stories")
+        .slice(0, 5)
+        .map((item, index) => ({
+          id: `story-${item.id}`,
+          title: item.headline,
+          imageUrl: item.imageUrl,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          category: item.category,
+          content: [
+            "This is the first page of the web story.",
+            "Here's some more interesting information about this story.",
+            "Final thoughts and conclusion about this topic."
+          ]
+        }));
+      
+      // Add additional stories with placeholder images if needed
       const additionalStories = [
         {
           id: 'story-101',
           title: 'The Future of AI in Journalism',
           imageUrl: placeholderImages[0],
           timeAgo: '2 hours ago',
-          category: 'Technology',
+          category: 'Web Stories',
           content: [
             "AI is transforming how news is created and distributed.",
             "Automated reporting is becoming more common for data-heavy stories.",
@@ -132,7 +157,41 @@ const WebStories = () => {
         }
       ];
       
-      const allStories = [...newsStories, ...additionalStories];
+      // Combine all stories, prioritizing admin-added ones
+      const allStories = [...adminNews, ...newsStories];
+      
+      // Add additional stories only if we don't have enough
+      if (allStories.length < 5) {
+        allStories.push(...additionalStories.slice(0, 5 - allStories.length));
+      }
+      
+      // Sort by date (newest first) - convert timeAgo to a sortable value
+      allStories.sort((a, b) => {
+        // This is a simple comparison - newer items appear first
+        if (a.timeAgo && b.timeAgo) {
+          if (a.timeAgo.includes('Just now')) return -1;
+          if (b.timeAgo.includes('Just now')) return 1;
+          
+          const aValue = a.timeAgo.match(/(\d+)/);
+          const bValue = b.timeAgo.match(/(\d+)/);
+          
+          if (aValue && bValue) {
+            const aNum = parseInt(aValue[0], 10);
+            const bNum = parseInt(bValue[0], 10);
+            
+            if (a.timeAgo.includes('minute') && b.timeAgo.includes('hour')) return -1;
+            if (a.timeAgo.includes('hour') && b.timeAgo.includes('minute')) return 1;
+            if (a.timeAgo.includes('minute') && b.timeAgo.includes('day')) return -1;
+            if (a.timeAgo.includes('day') && b.timeAgo.includes('minute')) return 1;
+            if (a.timeAgo.includes('hour') && b.timeAgo.includes('day')) return -1;
+            if (a.timeAgo.includes('day') && b.timeAgo.includes('hour')) return 1;
+            
+            return aNum - bNum; // Lower number (more recent) comes first
+          }
+        }
+        return 0;
+      });
+      
       setStories(allStories);
       
       // Set current story if id is provided
@@ -145,6 +204,15 @@ const WebStories = () => {
     };
     
     generateStories();
+    
+    // Listen for storage changes (when admin updates news)
+    window.addEventListener("storage", generateStories);
+    window.addEventListener("newsUpdated", generateStories);
+    
+    return () => {
+      window.removeEventListener("storage", generateStories);
+      window.removeEventListener("newsUpdated", generateStories);
+    };
   }, [id]);
   
   // If viewing a specific story

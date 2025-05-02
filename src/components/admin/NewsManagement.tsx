@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -28,9 +27,27 @@ import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle, Edit, Trash2, Upload, Filter } from "lucide-react";
 import news from "@/data/newsData";
 
-// Extract all unique categories from the news data
-const availableCategories = Array.from(
+// Extract all unique categories from the news data and add Web Stories and Premium
+const defaultCategories = [
+  "Latest",
+  "India",
+  "World",
+  "Education",
+  "Health",
+  "Lifestyle",
+  "City",
+  "Web Stories",
+  "Premium"
+];
+
+// Extract from news data
+const dataCategories = Array.from(
   new Set(news.map(item => item.category))
+);
+
+// Combine both sets of categories and remove duplicates
+const availableCategories = Array.from(
+  new Set([...defaultCategories, ...dataCategories])
 ).sort();
 
 // Sample news data

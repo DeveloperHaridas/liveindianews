@@ -1,19 +1,70 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { Button } from "@/components/ui/button";
-import news from "@/data/newsData";
+import defaultNews from "@/data/newsData";
 import { useAuth } from "@/hooks/useAuth";
 
 const Premium = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [premiumNews, setPremiumNews] = useState<any[]>([]);
   
-  // Get premium articles
-  const premiumNews = news.filter(item => item.isPremium);
+  // Load premium articles
+  useEffect(() => {
+    const loadPremiumArticles = () => {
+      // Get default premium articles
+      const defaultPremiumNews = defaultNews.filter(item => item.isPremium);
+      
+      // Get admin-added premium articles
+      const adminNewsData = localStorage.getItem("adminNewsData");
+      let adminPremiumNews: any[] = [];
+      
+      if (adminNewsData) {
+        try {
+          adminPremiumNews = JSON.parse(adminNewsData)
+            .filter((item: any) => item.category === "Premium")
+            .map((item: any) => ({
+              id: String(item.id),
+              headline: item.title,
+              summary: item.content?.substring(0, 120) + "...",
+              content: item.content,
+              category: item.category,
+              imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop",
+              source: item.source,
+              isPremium: true,
+              date: item.date
+            }));
+        } catch (error) {
+          console.error("Error parsing admin news data:", error);
+        }
+      }
+      
+      // Combine and sort by date (newest first)
+      const allPremiumNews = [...adminPremiumNews, ...defaultPremiumNews];
+      allPremiumNews.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      setPremiumNews(allPremiumNews);
+    };
+    
+    loadPremiumArticles();
+    
+    // Listen for storage changes (when admin updates news)
+    window.addEventListener("storage", loadPremiumArticles);
+    window.addEventListener("newsUpdated", loadPremiumArticles);
+    
+    return () => {
+      window.removeEventListener("storage", loadPremiumArticles);
+      window.removeEventListener("newsUpdated", loadPremiumArticles);
+    };
+  }, []);
   
   useEffect(() => {
     // If not authenticated, redirect after a brief delay
@@ -64,17 +115,24 @@ const Premium = () => {
         
         {/* Premium News Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {premiumNews.map(item => (
-            <NewsCard
-              key={item.id}
-              id={item.id}
-              headline={item.headline}
-              summary={item.summary}
-              category={item.category}
-              imageUrl={item.imageUrl}
-              isPremium={false} // We're already in premium, so no need to mark them
-            />
-          ))}
+          {premiumNews.length > 0 ? (
+            premiumNews.map(item => (
+              <NewsCard
+                key={item.id}
+                id={item.id}
+                headline={item.headline}
+                summary={item.summary}
+                category={item.category}
+                imageUrl={item.imageUrl}
+                isPremium={false} // We're already in premium, so no need to mark them
+                source={item.source}
+              />
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-12">
+              <p className="text-gray-500">No premium articles available yet.</p>
+            </div>
+          )}
         </div>
         
         {/* Benefits List */}
