@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, Menu, User, Tv, ShieldCheck, Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -27,6 +25,11 @@ export function Navbar() {
   const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMenuOpen(false); // Close menu after navigation
+  };
   
   useEffect(() => {
     // Check admin status when component mounts or authentication changes
@@ -129,16 +132,16 @@ export function Navbar() {
             </Link>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-4 text-white">
-            <Link to="/" className="px-3 py-2 hover:text-jiohighlight transition-colors">Home</Link>
-            <Link to="/trending" className="px-3 py-2 hover:text-jiohighlight transition-colors">Trending</Link>
-            <Link to="/categories" className="px-3 py-2 hover:text-jiohighlight transition-colors">Categories</Link>
-            <Link to="/live-tv" className="px-3 py-2 hover:text-jiohighlight transition-colors flex items-center gap-1">
+          <nav className="hidden md:flex items-center space-x-4">
+            <Link to="/" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Home</Link>
+            <Link to="/trending" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Trending</Link>
+            <Link to="/categories" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Categories</Link>
+            <Link to="/live-tv" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors flex items-center gap-1">
               <Tv className="h-4 w-4" />
               Live TV
             </Link>
-            <Link to="/premium" className="px-3 py-2 hover:text-jiohighlight transition-colors">Premium</Link>
-            <Link to="/shorts" className="px-3 py-2 hover:text-jiohighlight transition-colors flex items-center gap-1">
+            <Link to="/premium" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Premium</Link>
+            <Link to="/shorts" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors flex items-center gap-1">
               <Film className="h-4 w-4" />
               Shorts
             </Link>
@@ -174,65 +177,58 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile menu - Updated to position on left side */}
+      {/* Mobile menu - Updated with button functionality */}
       <div className={cn(
         "md:hidden bg-jioblue absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-4 space-y-4">
-          <Link 
-            to="/" 
-            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
-            onClick={toggleMenu}
+          <button 
+            onClick={() => handleNavigation("/")}
+            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Home
-          </Link>
-          <Link 
-            to="/trending" 
-            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
-            onClick={toggleMenu}
+          </button>
+          <button 
+            onClick={() => handleNavigation("/trending")}
+            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Trending
-          </Link>
-          <Link 
-            to="/categories" 
-            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
-            onClick={toggleMenu}
+          </button>
+          <button 
+            onClick={() => handleNavigation("/categories")}
+            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Categories
-          </Link>
-          <Link 
-            to="/live-tv" 
-            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md flex items-center gap-2"
-            onClick={toggleMenu}
+          </button>
+          <button 
+            onClick={() => handleNavigation("/live-tv")}
+            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
           >
             <Tv className="h-4 w-4" />
             Live TV
-          </Link>
-          <Link 
-            to="/premium" 
-            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md"
-            onClick={toggleMenu}
+          </button>
+          <button 
+            onClick={() => handleNavigation("/premium")}
+            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Premium
-          </Link>
-          <Link 
-            to="/shorts" 
-            className="block px-3 py-2 text-white hover:bg-jioblue-light transition-colors rounded-md flex items-center gap-2"
-            onClick={toggleMenu}
+          </button>
+          <button 
+            onClick={() => handleNavigation("/shorts")}
+            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
           >
             <Film className="h-4 w-4" />
             Shorts
-          </Link>
+          </button>
           
-          <Link 
-            to="/admin" 
-            className="block px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2"
-            onClick={toggleMenu}
+          <button 
+            onClick={() => handleNavigation("/admin")}
+            className="block w-full text-left px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2"
           >
             <ShieldCheck className="h-4 w-4" />
             Admin
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -280,4 +276,3 @@ export function Navbar() {
     </header>
   );
 }
-

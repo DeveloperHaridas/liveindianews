@@ -25,7 +25,7 @@ const config: Config = {
         },
         jiohighlight: {
           DEFAULT: "#1EAEDB",
-          light: "#33C3F0",
+          light: "#33C3F0", // Brighter blue for text hover
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
