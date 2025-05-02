@@ -177,46 +177,46 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile menu - Updated with button functionality */}
+      {/* Mobile menu - Make sure buttons have proper navigation functionality */}
       <div className={cn(
-        "md:hidden bg-jioblue absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out",
+        "md:hidden bg-jioblue absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out z-50",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-4 space-y-4">
           <button 
             onClick={() => handleNavigation("/")}
-            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Home
           </button>
           <button 
             onClick={() => handleNavigation("/trending")}
-            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Trending
           </button>
           <button 
             onClick={() => handleNavigation("/categories")}
-            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Categories
           </button>
           <button 
             onClick={() => handleNavigation("/live-tv")}
-            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
+            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
           >
             <Tv className="h-4 w-4" />
             Live TV
           </button>
           <button 
             onClick={() => handleNavigation("/premium")}
-            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
           >
             Premium
           </button>
           <button 
             onClick={() => handleNavigation("/shorts")}
-            className="block w-full text-left px-3 py-2 text-white hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
+            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
           >
             <Film className="h-4 w-4" />
             Shorts
