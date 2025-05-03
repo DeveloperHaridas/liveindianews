@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WebStoryCard } from "@/components/WebStoryCard";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import defaultNews from "@/data/newsData";
 import { Newspaper } from "lucide-react";
 
@@ -244,6 +245,11 @@ const WebStories = () => {
               </div>
             </div>
           </div>
+          
+          {/* Add newsletter signup at the end */}
+          <div className="mt-12">
+            <NewsletterSignup />
+          </div>
         </main>
         <Footer />
       </div>
@@ -271,6 +277,11 @@ const WebStories = () => {
               category={story.category}
             />
           ))}
+        </div>
+        
+        {/* Add newsletter signup at the end */}
+        <div className="mt-12">
+          <NewsletterSignup />
         </div>
       </main>
       <Footer />

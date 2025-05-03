@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { Button } from "@/components/ui/button";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { WebStoriesSection } from "@/components/WebStoriesSection";
 import defaultNews from "@/data/newsData";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -21,12 +22,21 @@ interface NewsItem {
   source: string;
 }
 
+interface WebStory {
+  id: string;
+  title: string;
+  imageUrl: string;
+  timeAgo?: string;
+  category?: string;
+}
+
 const NewsDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [allNews, setAllNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [webStories, setWebStories] = useState<WebStory[]>([]);
   
   // Load all news (default + admin)
   useEffect(() => {
@@ -78,6 +88,50 @@ const NewsDetail = () => {
       window.removeEventListener("newsUpdated", loadAllNews);
     };
   }, []);
+
+  // Generate web stories based on related articles or general content
+  useEffect(() => {
+    if (!article || loading) return;
+    
+    // Create web stories from related articles or general content
+    const storyItems = relatedArticles.length > 0 
+      ? relatedArticles.map(item => ({
+          id: `story-${item.id}`,
+          title: item.headline,
+          imageUrl: item.imageUrl,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          category: item.category
+        }))
+      : allNews.slice(0, 5).map(item => ({
+          id: `story-${item.id}`,
+          title: item.headline,
+          imageUrl: item.imageUrl,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          category: item.category
+        }));
+    
+    setWebStories(storyItems);
+  }, [allNews, article, loading]);
+  
+  // Helper function to calculate time ago
+  function getTimeAgo(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) {
+      return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
+    }
+    if (diffHours > 0) {
+      return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+    }
+    if (diffMins > 0) {
+      return diffMins === 1 ? '1 minute ago' : `${diffMins} minutes ago`;
+    }
+    return 'Just now';
+  }
   
   // Find the article with the matching ID
   const article = allNews.find(item => item.id === id);
@@ -183,6 +237,13 @@ const NewsDetail = () => {
             </div>
           )}
           
+          {/* Web Stories Section - added at the bottom */}
+          {webStories.length > 0 && (
+            <div className="mt-12">
+              <WebStoriesSection stories={webStories} />
+            </div>
+          )}
+          
           <NewsletterSignup />
         </main>
         <Footer />
@@ -243,6 +304,13 @@ const NewsDetail = () => {
                 />
               ))}
             </div>
+          </div>
+        )}
+        
+        {/* Web Stories Section - added at the bottom */}
+        {webStories.length > 0 && (
+          <div className="mt-12">
+            <WebStoriesSection stories={webStories} />
           </div>
         )}
         

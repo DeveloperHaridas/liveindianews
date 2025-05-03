@@ -270,11 +270,6 @@ const Index = () => {
           />
         </div>
 
-        {/* Web Stories Section */}
-        {!isMobile && webStories.length > 0 && (
-          <WebStoriesSection stories={webStories} />
-        )}
-
         {/* Shorts Section - Only for Desktop */}
         {!isMobile && featuredVideos.length > 0 && (
           <div className="mb-8">
@@ -372,6 +367,11 @@ const Index = () => {
               />
             ))}
           </div>
+        )}
+        
+        {/* Web Stories Section - moved to bottom */}
+        {!isMobile && webStories.length > 0 && (
+          <WebStoriesSection stories={webStories} />
         )}
 
         {/* Premium Newsletter Signup */}

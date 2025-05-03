@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -283,13 +282,6 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Web Stories Section - show when we have web stories for this category or on Web Stories tab */}
-        {(webStories.length > 0 || activeCategory === "Web Stories") && (
-          <div className="mb-8">
-            <WebStoriesSection stories={webStories} />
-          </div>
-        )}
-
         {/* Latest News Section - show for all categories */}
         {latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
           <div className="mb-8">
@@ -321,6 +313,13 @@ const Categories = () => {
         {filteredNews.length === 0 && activeCategory !== "Web Stories" && (
           <div className="text-center py-12">
             <p className="text-gray-500">No articles found in this category.</p>
+          </div>
+        )}
+        
+        {/* Web Stories Section - moved to bottom for all categories */}
+        {(webStories.length > 0 || activeCategory === "Web Stories") && (
+          <div className="mb-8 mt-12">
+            <WebStoriesSection stories={webStories} />
           </div>
         )}
         
