@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WebStoryCard } from "@/components/WebStoryCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { LatestNews } from "@/components/LatestNews";
 import defaultNews from "@/data/newsData";
 import { Newspaper } from "lucide-react";
 
@@ -31,6 +31,7 @@ const WebStories = () => {
   const { id } = useParams();
   const [stories, setStories] = useState<WebStory[]>([]);
   const [currentStory, setCurrentStory] = useState<WebStory | null>(null);
+  const [latestNewsItems, setLatestNewsItems] = useState<any[]>([]);
   
   // Helper function to calculate time ago
   function getTimeAgo(date: Date): string {
@@ -93,6 +94,19 @@ const WebStories = () => {
             "Final thoughts and conclusion about this topic."
           ]
         }));
+      
+      // Create latest news items
+      const latestItems = defaultNews
+        .slice(0, 5)
+        .map(item => ({
+          id: item.id,
+          headline: item.headline,
+          timeAgo: getTimeAgo(new Date(item.date)),
+          imageUrl: item.imageUrl,
+          category: item.category
+        }));
+        
+      setLatestNewsItems(latestItems);
       
       // Add additional stories with placeholder images if needed
       const additionalStories = [
@@ -246,6 +260,16 @@ const WebStories = () => {
             </div>
           </div>
           
+          {/* Latest News Section - added to the bottom before newsletter */}
+          {latestNewsItems.length > 0 && (
+            <div className="mt-12">
+              <LatestNews 
+                title="Latest Updates"
+                items={latestNewsItems}
+              />
+            </div>
+          )}
+          
           {/* Add newsletter signup at the end */}
           <div className="mt-12">
             <NewsletterSignup />
@@ -278,6 +302,16 @@ const WebStories = () => {
             />
           ))}
         </div>
+        
+        {/* Latest News Section - added to the bottom before newsletter */}
+        {latestNewsItems.length > 0 && (
+          <div className="mt-12">
+            <LatestNews 
+              title="Latest Updates"
+              items={latestNewsItems}
+            />
+          </div>
+        )}
         
         {/* Add newsletter signup at the end */}
         <div className="mt-12">

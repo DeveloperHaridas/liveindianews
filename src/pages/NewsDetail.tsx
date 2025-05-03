@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -6,6 +7,7 @@ import { NewsCard } from "@/components/NewsCard";
 import { Button } from "@/components/ui/button";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { WebStoriesSection } from "@/components/WebStoriesSection";
+import { LatestNews } from "@/components/LatestNews";
 import defaultNews from "@/data/newsData";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -36,6 +38,7 @@ const NewsDetail = () => {
   const [allNews, setAllNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [webStories, setWebStories] = useState<WebStory[]>([]);
+  const [latestNewsItems, setLatestNewsItems] = useState<any[]>([]);
   
   // Load all news (default + admin)
   useEffect(() => {
@@ -118,7 +121,21 @@ const NewsDetail = () => {
         }));
     
     setWebStories(storyItems);
-  }, [allNews, article, loading, relatedArticles]);
+    
+    // Create latest news items
+    const latestItems = allNews
+      .filter(item => item.id !== id)
+      .slice(0, 5)
+      .map(item => ({
+        id: item.id,
+        headline: item.headline,
+        timeAgo: getTimeAgo(new Date(item.date)),
+        imageUrl: item.imageUrl,
+        category: item.category
+      }));
+      
+    setLatestNewsItems(latestItems);
+  }, [allNews, article, loading, relatedArticles, id]);
   
   // Helper function to calculate time ago
   function getTimeAgo(date: Date): string {
@@ -236,10 +253,20 @@ const NewsDetail = () => {
             </div>
           )}
           
-          {/* Web Stories Section - added at the bottom */}
+          {/* Web Stories Section - moved to the bottom */}
           {webStories.length > 0 && (
             <div className="mt-12">
               <WebStoriesSection stories={webStories} />
+            </div>
+          )}
+          
+          {/* Latest News Section - added at the bottom before newsletter */}
+          {latestNewsItems.length > 0 && (
+            <div className="mt-12">
+              <LatestNews 
+                title="Latest Updates"
+                items={latestNewsItems}
+              />
             </div>
           )}
           
@@ -306,10 +333,20 @@ const NewsDetail = () => {
           </div>
         )}
         
-        {/* Web Stories Section - added at the bottom */}
+        {/* Web Stories Section - moved to the bottom */}
         {webStories.length > 0 && (
           <div className="mt-12">
             <WebStoriesSection stories={webStories} />
+          </div>
+        )}
+        
+        {/* Latest News Section - added at the bottom before newsletter */}
+        {latestNewsItems.length > 0 && (
+          <div className="mt-12">
+            <LatestNews 
+              title="Latest Updates"
+              items={latestNewsItems}
+            />
           </div>
         )}
         
