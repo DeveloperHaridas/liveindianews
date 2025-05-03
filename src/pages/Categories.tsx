@@ -282,16 +282,6 @@ const Categories = () => {
           </p>
         </div>
         
-        {/* Latest News Section - show for all categories */}
-        {latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
-          <div className="mb-8">
-            <LatestNews 
-              title={`Latest ${activeCategory} Updates`}
-              items={latestNewsItems}
-            />
-          </div>
-        )}
-        
         {/* News Grid - Don't show for Web Stories tab */}
         {activeCategory !== "Web Stories" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -326,6 +316,16 @@ const Categories = () => {
         {webStories.length === 0 && activeCategory === "Web Stories" && (
           <div className="text-center py-12">
             <p className="text-gray-500">No web stories found.</p>
+          </div>
+        )}
+        
+        {/* Latest News Section - moved to the end before newsletter */}
+        {latestNewsItems.length > 0 && activeCategory !== "Web Stories" && (
+          <div className="mb-8 mt-12">
+            <LatestNews 
+              title={`Latest ${activeCategory} Updates`}
+              items={latestNewsItems}
+            />
           </div>
         )}
         
