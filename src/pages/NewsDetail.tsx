@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -89,6 +88,14 @@ const NewsDetail = () => {
     };
   }, []);
 
+  // Find the article with the matching ID - moved up before it's used
+  const article = allNews.find(item => item.id === id);
+  
+  // Get related articles in the same category
+  const relatedArticles = article 
+    ? allNews.filter(item => item.category === article.category && item.id !== article.id).slice(0, 3)
+    : [];
+
   // Generate web stories based on related articles or general content
   useEffect(() => {
     if (!article || loading) return;
@@ -111,7 +118,7 @@ const NewsDetail = () => {
         }));
     
     setWebStories(storyItems);
-  }, [allNews, article, loading]);
+  }, [allNews, article, loading, relatedArticles]);
   
   // Helper function to calculate time ago
   function getTimeAgo(date: Date): string {
@@ -132,14 +139,6 @@ const NewsDetail = () => {
     }
     return 'Just now';
   }
-  
-  // Find the article with the matching ID
-  const article = allNews.find(item => item.id === id);
-  
-  // Get related articles in the same category
-  const relatedArticles = article 
-    ? allNews.filter(item => item.category === article.category && item.id !== article.id).slice(0, 3)
-    : [];
   
   // If loading, show loading state
   if (loading) {
