@@ -119,29 +119,29 @@ export function Navbar() {
   };
   
   return (
-    <header className="sticky top-0 z-50 w-full bg-jioblue shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Button variant="ghost" size="icon" className="mr-2 md:hidden" onClick={toggleMenu}>
-              <Menu className="h-6 w-6 text-white" />
+              <Menu className="h-6 w-6 text-jioblue" />
             </Button>
             <Link to="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-white">Live India</span>
+              <span className="text-2xl font-bold text-jioblue">Live India</span>
               <span className="text-2xl font-bold text-jiohighlight">News</span>
             </Link>
           </div>
 
           <nav className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Home</Link>
-            <Link to="/trending" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Trending</Link>
-            <Link to="/categories" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Categories</Link>
-            <Link to="/live-tv" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors flex items-center gap-1">
+            <Link to="/" className="px-3 py-2 text-jioblue hover:text-jiohighlight font-medium transition-colors">Home</Link>
+            <Link to="/trending" className="px-3 py-2 text-jioblue hover:text-jiohighlight font-medium transition-colors">Trending</Link>
+            <Link to="/categories" className="px-3 py-2 text-jioblue hover:text-jiohighlight font-medium transition-colors">Categories</Link>
+            <Link to="/live-tv" className="px-3 py-2 text-jioblue hover:text-jiohighlight font-medium transition-colors flex items-center gap-1">
               <Tv className="h-4 w-4" />
               Live TV
             </Link>
-            <Link to="/premium" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors">Premium</Link>
-            <Link to="/shorts" className="px-3 py-2 text-white hover:text-jiohighlight-light font-medium transition-colors flex items-center gap-1">
+            <Link to="/premium" className="px-3 py-2 text-jioblue hover:text-jiohighlight font-medium transition-colors">Premium</Link>
+            <Link to="/shorts" className="px-3 py-2 text-jioblue hover:text-jiohighlight font-medium transition-colors flex items-center gap-1">
               <Film className="h-4 w-4" />
               Shorts
             </Link>
@@ -159,7 +159,7 @@ export function Navbar() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="text-white"
+              className="text-jioblue"
               onClick={() => setOpen(true)}
             >
               <Search className="h-5 w-5" />
@@ -168,7 +168,7 @@ export function Navbar() {
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-white"
+              className="text-jioblue"
               onClick={() => navigate(isAdmin ? "/admin" : "/login")}
             >
               <User className="h-5 w-5" />
@@ -179,44 +179,44 @@ export function Navbar() {
       
       {/* Mobile menu - Make sure buttons have proper navigation functionality */}
       <div className={cn(
-        "md:hidden bg-jioblue absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out z-50",
+        "md:hidden bg-white/95 backdrop-blur-md absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out z-50 shadow-lg",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-4 space-y-4">
           <button 
             onClick={() => handleNavigation("/")}
-            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Home
           </button>
           <button 
             onClick={() => handleNavigation("/trending")}
-            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Trending
           </button>
           <button 
             onClick={() => handleNavigation("/categories")}
-            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Categories
           </button>
           <button 
             onClick={() => handleNavigation("/live-tv")}
-            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
+            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
           >
             <Tv className="h-4 w-4" />
             Live TV
           </button>
           <button 
             onClick={() => handleNavigation("/premium")}
-            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md"
+            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Premium
           </button>
           <button 
             onClick={() => handleNavigation("/shorts")}
-            className="block w-full text-left px-3 py-2 text-jiohighlight-light hover:bg-jioblue-light font-medium transition-colors rounded-md flex items-center gap-2"
+            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
           >
             <Film className="h-4 w-4" />
             Shorts
@@ -224,7 +224,7 @@ export function Navbar() {
           
           <button 
             onClick={() => handleNavigation("/admin")}
-            className="block w-full text-left px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2"
+            className="block w-full text-left px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2 shadow-sm"
           >
             <ShieldCheck className="h-4 w-4" />
             Admin
@@ -235,7 +235,7 @@ export function Navbar() {
       {/* Add overlay when menu is open */}
       {isMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" 
+          className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40 md:hidden" 
           onClick={toggleMenu}
         />
       )}
@@ -261,7 +261,7 @@ export function Navbar() {
                   <div className="text-xs text-muted-foreground flex items-center gap-2">
                     <span className={cn(
                       "px-1.5 py-0.5 rounded text-white text-xs",
-                      result.type === "video" ? "bg-red-500" : "bg-blue-500"
+                      result.type === "video" ? "bg-red-500" : "bg-jiohighlight"
                     )}>
                       {result.type === "video" ? "Video" : "News"}
                     </span>

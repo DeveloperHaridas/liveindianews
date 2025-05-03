@@ -1,6 +1,6 @@
 
 import { Home, Tv, BookOpen, Play, TrendingUp } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export function BottomNav() {
   const location = useLocation();
@@ -15,41 +15,41 @@ export function BottomNav() {
   };
   
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-jioblue border-t border-jioblue-light flex justify-between px-2 py-1 z-50">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md shadow-[0_-2px_10px_rgba(0,0,0,0.05)] flex justify-between px-2 py-1 z-50">
       <button 
         onClick={() => handleNavigation("/")}
         className="flex flex-col items-center py-1 px-3 w-full focus:outline-none"
       >
-        <Home className={`h-5 w-5 ${isActive('/') ? 'text-jiohighlight-light' : 'text-white'}`} />
-        <span className={`text-xs font-medium ${isActive('/') ? 'text-jiohighlight-light' : 'text-white'}`}>Home</span>
+        <Home className={`h-5 w-5 ${isActive('/') ? 'text-jiohighlight' : 'text-gray-500'}`} />
+        <span className={`text-xs font-medium ${isActive('/') ? 'text-jiohighlight' : 'text-gray-600'}`}>Home</span>
       </button>
       <button 
         onClick={() => handleNavigation("/trending")}
         className="flex flex-col items-center py-1 px-3 w-full focus:outline-none"
       >
-        <TrendingUp className={`h-5 w-5 ${isActive('/trending') ? 'text-jiohighlight-light' : 'text-white'}`} />
-        <span className={`text-xs font-medium ${isActive('/trending') ? 'text-jiohighlight-light' : 'text-white'}`}>Trending</span>
+        <TrendingUp className={`h-5 w-5 ${isActive('/trending') ? 'text-jiohighlight' : 'text-gray-500'}`} />
+        <span className={`text-xs font-medium ${isActive('/trending') ? 'text-jiohighlight' : 'text-gray-600'}`}>Trending</span>
       </button>
       <button 
         onClick={() => handleNavigation("/categories")}
         className="flex flex-col items-center py-1 px-3 w-full focus:outline-none"
       >
-        <BookOpen className={`h-5 w-5 ${isActive('/categories') ? 'text-jiohighlight-light' : 'text-white'}`} />
-        <span className={`text-xs font-medium ${isActive('/categories') ? 'text-jiohighlight-light' : 'text-white'}`}>Categories</span>
+        <BookOpen className={`h-5 w-5 ${isActive('/categories') ? 'text-jiohighlight' : 'text-gray-500'}`} />
+        <span className={`text-xs font-medium ${isActive('/categories') ? 'text-jiohighlight' : 'text-gray-600'}`}>Categories</span>
       </button>
       <button 
         onClick={() => handleNavigation("/live-tv")}
         className="flex flex-col items-center py-1 px-3 w-full focus:outline-none"
       >
-        <Tv className={`h-5 w-5 ${isActive('/live-tv') ? 'text-jiohighlight-light' : 'text-white'}`} />
-        <span className={`text-xs font-medium ${isActive('/live-tv') ? 'text-jiohighlight-light' : 'text-white'}`}>Live TV</span>
+        <Tv className={`h-5 w-5 ${isActive('/live-tv') ? 'text-jiohighlight' : 'text-gray-500'}`} />
+        <span className={`text-xs font-medium ${isActive('/live-tv') ? 'text-jiohighlight' : 'text-gray-600'}`}>Live TV</span>
       </button>
       <button 
         onClick={() => handleNavigation("/shorts")}
         className="flex flex-col items-center py-1 px-3 w-full focus:outline-none"
       >
-        <Play className={`h-5 w-5 ${isActive('/shorts') ? 'text-jiohighlight-light' : 'text-white'}`} />
-        <span className={`text-xs font-medium ${isActive('/shorts') ? 'text-jiohighlight-light' : 'text-white'}`}>Shorts</span>
+        <Play className={`h-5 w-5 ${isActive('/shorts') ? 'text-jiohighlight' : 'text-gray-500'}`} />
+        <span className={`text-xs font-medium ${isActive('/shorts') ? 'text-jiohighlight' : 'text-gray-600'}`}>Shorts</span>
       </button>
     </div>
   );
