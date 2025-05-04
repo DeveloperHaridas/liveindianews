@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { BottomNav } from "./components/BottomNav";
+import { useEffect } from "react";
+import { setupDataIntegrityCheck } from "./utils/dataStorage";
 
 // Pages
 import Index from "./pages/Index";
@@ -22,46 +25,44 @@ import WebStories from "./pages/WebStories";
 
 const queryClient = new QueryClient();
 
-// Add the following code after other imports and before the App function:
-import { useEffect } from "react";
-import { setupDataIntegrityCheck } from "./utils/dataStorage";
+const App = () => {
+  // Move the useEffect hook inside the component
+  useEffect(() => {
+    // Set up periodic data integrity checks
+    const cleanup = setupDataIntegrityCheck();
+    return cleanup;
+  }, []);
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="pb-[60px] md:pb-0"> {/* Add padding for bottom navigation */}
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/premium" element={<Premium />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/trending" element={<Trending />} />
-              <Route path="/news/:id" element={<NewsDetail />} />
-              <Route path="/live-tv" element={<LiveTV />} />
-              <Route path="/shorts" element={<Shorts />} />
-              <Route path="/web-stories" element={<WebStories />} />
-              <Route path="/web-stories/:id" element={<WebStories />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <BottomNav />
-          </div>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
-
-// Inside App component, add this effect
-useEffect(() => {
-  // Set up periodic data integrity checks
-  const cleanup = setupDataIntegrityCheck();
-  return cleanup;
-}, []);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="pb-[60px] md:pb-0"> {/* Add padding for bottom navigation */}
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/premium" element={<Premium />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/trending" element={<Trending />} />
+                <Route path="/news/:id" element={<NewsDetail />} />
+                <Route path="/live-tv" element={<LiveTV />} />
+                <Route path="/shorts" element={<Shorts />} />
+                <Route path="/web-stories" element={<WebStories />} />
+                <Route path="/web-stories/:id" element={<WebStories />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <BottomNav />
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
