@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
@@ -12,6 +12,26 @@ const Trending = () => {
   const [webStories, setWebStories] = useState([]);
   const [latestNewsItems, setLatestNewsItems] = useState([]);
   const [allNews, setAllNews] = useState(news);
+  
+  // Helper function to calculate time ago - moved outside useEffect to prevent recreating on every render
+  const getTimeAgo = (date: Date): string => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) {
+      return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
+    }
+    if (diffHours > 0) {
+      return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+    }
+    if (diffMins > 0) {
+      return diffMins === 1 ? '1 minute ago' : `${diffMins} minutes ago`;
+    }
+    return 'Just now';
+  };
   
   // Load news from localStorage (set by admin panel)
   useEffect(() => {
@@ -69,31 +89,14 @@ const Trending = () => {
     }
   }, []);
   
-  // In a real app, we would sort by popularity metrics
-  // For this demo, we'll just use the combined news data
-  const trendingNews = [...allNews].sort(() => 0.5 - Math.random());
+  // Use useMemo to calculate trending news only when allNews changes
+  const trendingNews = useMemo(() => {
+    // In a real app, we would sort by popularity metrics
+    // For this demo, we'll just use the combined news data with random sorting
+    return [...allNews].sort(() => 0.5 - Math.random());
+  }, [allNews]);
   
-  // Helper function to calculate time ago
-  function getTimeAgo(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    
-    if (diffDays > 0) {
-      return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
-    }
-    if (diffHours > 0) {
-      return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
-    }
-    if (diffMins > 0) {
-      return diffMins === 1 ? '1 minute ago' : `${diffMins} minutes ago`;
-    }
-    return 'Just now';
-  }
-  
-  // Generate web stories and latest news
+  // Generate web stories and latest news with proper dependency array
   useEffect(() => {
     // Create web stories
     const storyItems = trendingNews.slice(0, 5).map(item => ({
@@ -115,7 +118,7 @@ const Trending = () => {
     
     setWebStories(storyItems);
     setLatestNewsItems(latestItems);
-  }, [trendingNews]);
+  }, [trendingNews]); // Only run when trendingNews changes
   
   return (
     <div className="flex flex-col min-h-screen">
