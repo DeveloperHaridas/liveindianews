@@ -21,15 +21,20 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isBlurred, setIsBlurred] = useState(true);
   const { isAuthenticated, isAdmin, checkAdminStatus } = useAuth();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    setIsBlurred(false); // Remove blur when menu is toggled
+  };
   
   const handleNavigation = (path: string) => {
     navigate(path);
     setIsMenuOpen(false); // Close menu after navigation
+    setIsBlurred(false); // Remove blur after navigation
   };
   
   useEffect(() => {
@@ -117,10 +122,17 @@ export function Navbar() {
   const handleSelectSearchResult = (url: string) => {
     setOpen(false);
     navigate(url);
+    setIsBlurred(false); // Remove blur after search selection
   };
+
+  // Determine navbar classes based on blur state
+  const navbarClasses = cn(
+    "sticky top-0 z-50 w-full shadow-sm", 
+    isBlurred ? "bg-white/95 backdrop-blur-md" : "bg-white"
+  );
   
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-sm">
+    <header className={navbarClasses} onClick={() => setIsBlurred(false)}>
       <div className="container mx-auto px-4">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
@@ -161,7 +173,10 @@ export function Navbar() {
               variant="ghost" 
               size="icon" 
               className="text-jioblue"
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true);
+                setIsBlurred(false);
+              }}
             >
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
@@ -170,7 +185,10 @@ export function Navbar() {
               variant="ghost" 
               size="icon"
               className="text-jioblue"
-              onClick={() => navigate(isAdmin ? "/admin" : "/login")}
+              onClick={() => {
+                navigate(isAdmin ? "/admin" : "/login");
+                setIsBlurred(false);
+              }}
             >
               <User className="h-5 w-5" />
             </Button>
@@ -180,7 +198,7 @@ export function Navbar() {
       
       {/* Mobile menu - Updated with wider width and better blur effect */}
       <div className={cn(
-        "md:hidden bg-white/95 backdrop-blur-md absolute left-0 w-full max-w-[320px] h-screen transition-transform duration-300 ease-in-out z-50 shadow-lg",
+        "md:hidden bg-white absolute left-0 w-full max-w-[320px] h-screen transition-transform duration-300 ease-in-out z-50 shadow-lg",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-6 space-y-5">
@@ -241,7 +259,7 @@ export function Navbar() {
       {/* Add overlay when menu is open */}
       {isMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40 md:hidden" 
+          className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden" 
           onClick={toggleMenu}
         />
       )}
