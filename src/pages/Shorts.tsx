@@ -18,6 +18,40 @@ interface VideoNews {
   source?: string;
 }
 
+// Sample video news data for fallback
+const sampleVideoNews = [
+  { 
+    id: "1", 
+    title: "Breaking: Major Political Developments", 
+    category: "Politics",
+    duration: "2:45",
+    thumbnailUrl: "https://images.unsplash.com/photo-1554177255-61502b352de3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    videoUrl: "https://example.com/video1.mp4",
+    date: "2025-04-25",
+    source: "JioNews"
+  },
+  { 
+    id: "2", 
+    title: "Tech Innovation: New AI Breakthrough", 
+    category: "Technology",
+    duration: "3:12",
+    thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    videoUrl: "https://example.com/video2.mp4",
+    date: "2025-04-24",
+    source: "Tech Today"
+  },
+  { 
+    id: "3", 
+    title: "Sports Highlights: Weekend Tournament", 
+    category: "Sports",
+    duration: "1:58",
+    thumbnailUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    videoUrl: "https://example.com/video3.mp4",
+    date: "2025-04-23",
+    source: "Sports Network"
+  },
+];
+
 const Shorts = () => {
   const [videoNews, setVideoNews] = useState<VideoNews[]>([]);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -28,66 +62,53 @@ const Shorts = () => {
   useEffect(() => {
     const loadVideoNews = () => {
       setIsLoading(true);
-      const storedVideoNews = localStorage.getItem("videoNewsData");
-      
-      if (storedVideoNews) {
-        try {
+      try {
+        // First, try to get the data from localStorage
+        const storedVideoNews = localStorage.getItem("videoNewsData");
+        
+        if (storedVideoNews) {
+          // Parse and validate the stored data
           const parsedVideoNews = JSON.parse(storedVideoNews);
-          setVideoNews(parsedVideoNews);
-          console.log("Loaded video news from localStorage:", parsedVideoNews);
-        } catch (error) {
-          console.error("Error parsing video news data:", error);
-          toast({
-            title: "Error",
-            description: "Failed to load video content. Please try again.",
-            variant: "destructive",
-          });
-          // Fall back to sample data
-          loadSampleData();
+          
+          // Check if data is an array and has at least one item with required properties
+          const isValidData = Array.isArray(parsedVideoNews) && 
+            parsedVideoNews.length > 0 && 
+            parsedVideoNews.every(item => 
+              item.id && item.title && item.thumbnailUrl && item.videoUrl
+            );
+          
+          if (isValidData) {
+            console.log("Loaded valid video news from localStorage:", parsedVideoNews);
+            setVideoNews(parsedVideoNews);
+          } else {
+            console.warn("Invalid video news data format, using sample data");
+            setVideoNews(sampleVideoNews);
+            // Store the sample data as a fallback
+            localStorage.setItem("videoNewsData", JSON.stringify(sampleVideoNews));
+          }
+        } else {
+          // Fallback to sample data if no admin data exists
+          console.log("No video news in localStorage, using sample data");
+          setVideoNews(sampleVideoNews);
+          // Store the sample data as a fallback
+          localStorage.setItem("videoNewsData", JSON.stringify(sampleVideoNews));
         }
-      } else {
-        // Fallback to sample data if no admin data exists
-        loadSampleData();
+      } catch (error) {
+        console.error("Error loading video news data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load video content. Using default videos.",
+          variant: "destructive",
+        });
+        // Fall back to sample data
+        setVideoNews(sampleVideoNews);
+        // Store the sample data as a fallback
+        localStorage.setItem("videoNewsData", JSON.stringify(sampleVideoNews));
       }
       setIsLoading(false);
     };
     
-    const loadSampleData = () => {
-      const sampleVideoNews = [
-        { 
-          id: "1", 
-          title: "Breaking: Major Political Developments", 
-          category: "Politics",
-          duration: "2:45",
-          thumbnailUrl: "https://images.unsplash.com/photo-1554177255-61502b352de3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-          videoUrl: "https://example.com/video1.mp4",
-          date: "2025-04-25",
-          source: "JioNews"
-        },
-        { 
-          id: "2", 
-          title: "Tech Innovation: New AI Breakthrough", 
-          category: "Technology",
-          duration: "3:12",
-          thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-          videoUrl: "https://example.com/video2.mp4",
-          date: "2025-04-24",
-          source: "Tech Today"
-        },
-        { 
-          id: "3", 
-          title: "Sports Highlights: Weekend Tournament", 
-          category: "Sports",
-          duration: "1:58",
-          thumbnailUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-          videoUrl: "https://example.com/video3.mp4",
-          date: "2025-04-23",
-          source: "Sports Network"
-        },
-      ];
-      setVideoNews(sampleVideoNews);
-    };
-    
+    // Initial load
     loadVideoNews();
     
     // Listen for storage changes (when admin updates videos)
@@ -96,9 +117,20 @@ const Shorts = () => {
     // Add custom event listener for programmatic updates
     window.addEventListener("videoNewsUpdated", loadVideoNews);
     
+    // Set an interval to check data integrity every hour
+    const dataCheckInterval = setInterval(() => {
+      const storedData = localStorage.getItem("videoNewsData");
+      if (!storedData) {
+        console.log("Video data missing, restoring defaults");
+        localStorage.setItem("videoNewsData", JSON.stringify(sampleVideoNews));
+        loadVideoNews();
+      }
+    }, 3600000); // 1 hour
+    
     return () => {
       window.removeEventListener("storage", loadVideoNews);
       window.removeEventListener("videoNewsUpdated", loadVideoNews);
+      clearInterval(dataCheckInterval);
     };
   }, [toast]);
   

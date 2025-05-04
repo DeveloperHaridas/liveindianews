@@ -179,62 +179,107 @@ export function VideoNewsManagement() {
     const updatedVideos = [...videoNews, newVideo];
     setVideoNews(updatedVideos);
     
-    // Store in localStorage to persist changes
-    localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
-    
-    // Trigger storage event for other tabs
-    window.dispatchEvent(new Event('storage'));
-    
-    // Trigger custom event for same-tab updates
-    const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
-    window.dispatchEvent(videoNewsUpdatedEvent);
-    
-    toast({
-      title: "Video Added",
-      description: `"${video.title}" has been added successfully.`,
-    });
+    // Store in localStorage with safeguards
+    try {
+      localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
+      
+      // Create a backup copy with timestamp
+      localStorage.setItem(
+        "videoNewsData_backup_" + new Date().toISOString().split('T')[0],
+        JSON.stringify(updatedVideos)
+      );
+      
+      // Trigger storage event for other tabs
+      window.dispatchEvent(new Event('storage'));
+      
+      // Trigger custom event for same-tab updates
+      const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
+      window.dispatchEvent(videoNewsUpdatedEvent);
+      
+      toast({
+        title: "Video Added",
+        description: `"${video.title}" has been added successfully.`,
+      });
+    } catch (error) {
+      console.error("Error saving video data:", error);
+      toast({
+        title: "Error Saving",
+        description: "There was an error saving the video. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleEditVideo = (video: VideoNews) => {
     const updatedVideos = videoNews.map(item => item.id === video.id ? video : item);
     setVideoNews(updatedVideos);
     
-    // Update localStorage
-    localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
-    
-    // Trigger storage event for other tabs
-    window.dispatchEvent(new Event('storage'));
-    
-    // Trigger custom event for same-tab updates
-    const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
-    window.dispatchEvent(videoNewsUpdatedEvent);
-    
-    toast({
-      title: "Video Updated",
-      description: `"${video.title}" has been updated successfully.`,
-    });
-    setIsEditing(false);
-    setCurrentVideo(null);
+    // Update localStorage with safeguards
+    try {
+      localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
+      
+      // Create a backup copy with timestamp
+      localStorage.setItem(
+        "videoNewsData_backup_" + new Date().toISOString().split('T')[0],
+        JSON.stringify(updatedVideos)
+      );
+      
+      // Trigger storage event for other tabs
+      window.dispatchEvent(new Event('storage'));
+      
+      // Trigger custom event for same-tab updates
+      const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
+      window.dispatchEvent(videoNewsUpdatedEvent);
+      
+      toast({
+        title: "Video Updated",
+        description: `"${video.title}" has been updated successfully.`,
+      });
+      setIsEditing(false);
+      setCurrentVideo(null);
+    } catch (error) {
+      console.error("Error updating video data:", error);
+      toast({
+        title: "Error Updating",
+        description: "There was an error updating the video. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleDeleteVideo = (id: string) => {
     const updatedVideos = videoNews.filter(item => item.id !== id);
     setVideoNews(updatedVideos);
     
-    // Update localStorage
-    localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
-    
-    // Trigger storage event for other tabs
-    window.dispatchEvent(new Event('storage'));
-    
-    // Trigger custom event for same-tab updates
-    const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
-    window.dispatchEvent(videoNewsUpdatedEvent);
-    
-    toast({
-      title: "Video Deleted",
-      description: "The video has been deleted successfully.",
-    });
+    // Update localStorage with safeguards
+    try {
+      localStorage.setItem("videoNewsData", JSON.stringify(updatedVideos));
+      
+      // Create a backup copy with timestamp
+      localStorage.setItem(
+        "videoNewsData_backup_" + new Date().toISOString().split('T')[0],
+        JSON.stringify(updatedVideos)
+      );
+      
+      // Trigger storage event for other tabs
+      window.dispatchEvent(new Event('storage'));
+      
+      // Trigger custom event for same-tab updates
+      const videoNewsUpdatedEvent = new CustomEvent('videoNewsUpdated');
+      window.dispatchEvent(videoNewsUpdatedEvent);
+      
+      toast({
+        title: "Video Deleted",
+        description: "The video has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting video data:", error);
+      toast({
+        title: "Error Deleting",
+        description: "There was an error deleting the video. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handlePreviewVideo = (videoUrl: string) => {

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +21,10 @@ import Admin from "./pages/Admin";
 import WebStories from "./pages/WebStories";
 
 const queryClient = new QueryClient();
+
+// Add the following code after other imports and before the App function:
+import { useEffect } from "react";
+import { setupDataIntegrityCheck } from "./utils/dataStorage";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -53,5 +56,12 @@ const App = () => (
     </AuthProvider>
   </QueryClientProvider>
 );
+
+// Inside App component, add this effect
+useEffect(() => {
+  // Set up periodic data integrity checks
+  const cleanup = setupDataIntegrityCheck();
+  return cleanup;
+}, []);
 
 export default App;

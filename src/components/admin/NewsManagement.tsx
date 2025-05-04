@@ -175,62 +175,107 @@ export function NewsManagement() {
     const updatedNews = [...newsItems, newItem];
     setNewsItems(updatedNews);
     
-    // Store in localStorage
-    localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
-    
-    // Trigger storage event for other tabs to detect the change
-    window.dispatchEvent(new Event('storage'));
-    
-    // Trigger custom event for same-tab updates
-    const newsUpdatedEvent = new CustomEvent('newsUpdated');
-    window.dispatchEvent(newsUpdatedEvent);
-    
-    toast({
-      title: "News Added",
-      description: `"${news.title}" has been added successfully.`,
-    });
+    // Store in localStorage with safeguards
+    try {
+      localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+      
+      // Create a backup copy with timestamp
+      localStorage.setItem(
+        "adminNewsData_backup_" + new Date().toISOString().split('T')[0],
+        JSON.stringify(updatedNews)
+      );
+      
+      // Trigger storage event for other tabs to detect the change
+      window.dispatchEvent(new Event('storage'));
+      
+      // Trigger custom event for same-tab updates
+      const newsUpdatedEvent = new CustomEvent('newsUpdated');
+      window.dispatchEvent(newsUpdatedEvent);
+      
+      toast({
+        title: "News Added",
+        description: `"${news.title}" has been added successfully.`,
+      });
+    } catch (error) {
+      console.error("Error saving news data:", error);
+      toast({
+        title: "Error Saving",
+        description: "There was an error saving the news. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleEditNews = (news: NewsItem) => {
     const updatedNews = newsItems.map(item => item.id === news.id ? news : item);
     setNewsItems(updatedNews);
     
-    // Update localStorage
-    localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
-    
-    // Trigger storage event for other tabs to detect the change
-    window.dispatchEvent(new Event('storage'));
-    
-    // Trigger custom event for same-tab updates
-    const newsUpdatedEvent = new CustomEvent('newsUpdated');
-    window.dispatchEvent(newsUpdatedEvent);
-    
-    toast({
-      title: "News Updated",
-      description: `"${news.title}" has been updated successfully.`,
-    });
-    setIsEditing(false);
-    setCurrentNews(null);
+    // Update localStorage with safeguards
+    try {
+      localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+      
+      // Create a backup copy with timestamp
+      localStorage.setItem(
+        "adminNewsData_backup_" + new Date().toISOString().split('T')[0],
+        JSON.stringify(updatedNews)
+      );
+      
+      // Trigger storage event for other tabs to detect the change
+      window.dispatchEvent(new Event('storage'));
+      
+      // Trigger custom event for same-tab updates
+      const newsUpdatedEvent = new CustomEvent('newsUpdated');
+      window.dispatchEvent(newsUpdatedEvent);
+      
+      toast({
+        title: "News Updated",
+        description: `"${news.title}" has been updated successfully.`,
+      });
+      setIsEditing(false);
+      setCurrentNews(null);
+    } catch (error) {
+      console.error("Error updating news data:", error);
+      toast({
+        title: "Error Updating",
+        description: "There was an error updating the news. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleDeleteNews = (id: number) => {
     const updatedNews = newsItems.filter(item => item.id !== id);
     setNewsItems(updatedNews);
     
-    // Update localStorage
-    localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
-    
-    // Trigger storage event for other tabs to detect the change
-    window.dispatchEvent(new Event('storage'));
-    
-    // Trigger custom event for same-tab updates
-    const newsUpdatedEvent = new CustomEvent('newsUpdated');
-    window.dispatchEvent(newsUpdatedEvent);
-    
-    toast({
-      title: "News Deleted",
-      description: "The news item has been deleted successfully.",
-    });
+    // Update localStorage with safeguards
+    try {
+      localStorage.setItem("adminNewsData", JSON.stringify(updatedNews));
+      
+      // Create a backup copy with timestamp
+      localStorage.setItem(
+        "adminNewsData_backup_" + new Date().toISOString().split('T')[0],
+        JSON.stringify(updatedNews)
+      );
+      
+      // Trigger storage event for other tabs to detect the change
+      window.dispatchEvent(new Event('storage'));
+      
+      // Trigger custom event for same-tab updates
+      const newsUpdatedEvent = new CustomEvent('newsUpdated');
+      window.dispatchEvent(newsUpdatedEvent);
+      
+      toast({
+        title: "News Deleted",
+        description: "The news item has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting news data:", error);
+      toast({
+        title: "Error Deleting",
+        description: "There was an error deleting the news. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   return (

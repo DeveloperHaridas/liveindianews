@@ -11,10 +11,67 @@ import news from "@/data/newsData";
 const Trending = () => {
   const [webStories, setWebStories] = useState([]);
   const [latestNewsItems, setLatestNewsItems] = useState([]);
+  const [allNews, setAllNews] = useState(news);
+  
+  // Load news from localStorage (set by admin panel)
+  useEffect(() => {
+    const loadNews = () => {
+      const adminNewsData = localStorage.getItem("adminNewsData");
+      
+      if (adminNewsData) {
+        try {
+          // Convert admin news format to match the expected format
+          const adminNews = JSON.parse(adminNewsData).map((item) => ({
+            id: String(item.id),
+            headline: item.title,
+            summary: item.content?.substring(0, 120) + "...",
+            content: item.content,
+            category: item.category,
+            imageUrl: item.imageUrl || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+            isPremium: item.category === "Premium",
+            date: item.date,
+            source: item.source || item.category
+          }));
+          
+          // Combine admin news with default news, prioritizing admin entries
+          const combinedNews = [
+            ...adminNews, 
+            ...news.filter(d => !adminNews.find((a) => String(a.id) === d.id))
+          ];
+          
+          // Sort by date, newest first
+          combinedNews.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB.getTime() - dateA.getTime();
+          });
+          
+          setAllNews(combinedNews);
+        } catch (error) {
+          console.error("Error parsing admin news data:", error);
+          setAllNews(news);
+        }
+      }
+    };
+    
+    // Initial load
+    loadNews();
+    
+    // Listen for storage changes (when admin updates news)
+    window.addEventListener("storage", loadNews);
+    
+    // Also add a custom event listener for direct updates
+    window.addEventListener("newsUpdated", loadNews);
+    
+    return () => {
+      window.removeEventListener("storage", loadNews);
+      window.removeEventListener("newsUpdated", loadNews);
+    }
+  }, []);
   
   // In a real app, we would sort by popularity metrics
-  // For this demo, we'll just use the existing news data
-  const trendingNews = [...news].sort(() => 0.5 - Math.random());
+  // For this demo, we'll just use the combined news data
+  const trendingNews = [...allNews].sort(() => 0.5 - Math.random());
   
   // Helper function to calculate time ago
   function getTimeAgo(date: Date): string {
@@ -58,7 +115,7 @@ const Trending = () => {
     
     setWebStories(storyItems);
     setLatestNewsItems(latestItems);
-  }, []);
+  }, [trendingNews]);
   
   return (
     <div className="flex flex-col min-h-screen">
