@@ -128,12 +128,12 @@ export function Navbar() {
   // Determine navbar classes based on blur state
   const navbarClasses = cn(
     "sticky top-0 z-50 w-full shadow-sm", 
-    isBlurred ? "bg-white/95 backdrop-blur-md" : "bg-white"
+    isBlurred ? "bg-yellow-100/95 backdrop-blur-md" : "bg-yellow-100"
   );
   
   return (
     <header className={navbarClasses} onClick={() => setIsBlurred(false)}>
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
             <Button variant="ghost" size="icon" className="mr-2 md:hidden" onClick={toggleMenu}>
