@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, Menu, User, Tv, ShieldCheck, Film } from "lucide-react";
@@ -119,9 +120,9 @@ export function Navbar() {
   };
   
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
             <Button variant="ghost" size="icon" className="mr-2 md:hidden" onClick={toggleMenu}>
               <Menu className="h-6 w-6 text-jioblue" />
@@ -177,56 +178,61 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile menu - Make sure buttons have proper navigation functionality */}
+      {/* Mobile menu - Updated with wider width and better blur effect */}
       <div className={cn(
-        "md:hidden bg-white/95 backdrop-blur-md absolute left-0 w-full max-w-[280px] h-screen transition-transform duration-300 ease-in-out z-50 shadow-lg",
+        "md:hidden bg-white/95 backdrop-blur-md absolute left-0 w-full max-w-[320px] h-screen transition-transform duration-300 ease-in-out z-50 shadow-lg",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-5">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-2xl font-bold text-jioblue">Live India</span>
+            <span className="text-2xl font-bold text-jiohighlight">News</span>
+          </div>
+          
           <button 
             onClick={() => handleNavigation("/")}
-            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
+            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Home
           </button>
           <button 
             onClick={() => handleNavigation("/trending")}
-            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
+            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Trending
           </button>
           <button 
             onClick={() => handleNavigation("/categories")}
-            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
+            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Categories
           </button>
           <button 
             onClick={() => handleNavigation("/live-tv")}
-            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
+            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
           >
-            <Tv className="h-4 w-4" />
+            <Tv className="h-5 w-5" />
             Live TV
           </button>
           <button 
             onClick={() => handleNavigation("/premium")}
-            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
+            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
           >
             Premium
           </button>
           <button 
             onClick={() => handleNavigation("/shorts")}
-            className="block w-full text-left px-3 py-2 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
+            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
           >
-            <Film className="h-4 w-4" />
+            <Film className="h-5 w-5" />
             Shorts
           </button>
           
           <button 
             onClick={() => handleNavigation("/admin")}
-            className="block w-full text-left px-3 py-2 bg-jiohighlight text-white rounded-md flex items-center gap-2 shadow-sm"
+            className="block w-full text-left px-4 py-3 bg-jiohighlight text-white rounded-md flex items-center gap-2 shadow-sm"
           >
-            <ShieldCheck className="h-4 w-4" />
+            <ShieldCheck className="h-5 w-5" />
             Admin
           </button>
         </div>
