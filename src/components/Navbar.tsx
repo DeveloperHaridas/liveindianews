@@ -200,144 +200,151 @@ export function Navbar() {
       {/* Mobile menu - only render when isMobile is true */}
       {isMobile && (
         <div className={cn(
-          "fixed inset-0 bg-gradient-to-b from-black to-gray-900 text-white z-50 transition-transform duration-300 ease-in-out",
+          "fixed inset-0 z-50 transition-transform duration-300 ease-in-out",
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}>
-          <div className="flex justify-between items-center p-5 border-b border-gray-800">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-white">Live India</span>
-              <span className="text-2xl font-bold text-jiohighlight">News</span>
-            </div>
-            <Button variant="ghost" size="icon" className="text-white" onClick={toggleMenu}>
-              <X className="h-6 w-6" />
-            </Button>
-          </div>
-          
-          <div className="flex flex-col h-[calc(100%-80px)] overflow-y-auto">
-            {/* Main Navigation */}
-            <div className="p-5 border-b border-gray-800">
-              <div className="space-y-0">
-                <button 
-                  onClick={() => handleNavigation("/")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
-                >
-                  <Home className="h-5 w-5" /> Home
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/trending")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
-                >
-                  <TrendingUp className="h-5 w-5" /> Trending
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/live-tv")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
-                >
-                  <Tv className="h-5 w-5" /> Live TV
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/premium")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
-                >
-                  <Crown className="h-5 w-5" /> 
-                  <span className="bg-gradient-to-r from-amber-500 to-yellow-300 bg-clip-text text-transparent font-semibold">Premium</span>
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/shorts")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
-                >
-                  <Film className="h-5 w-5" /> Shorts Videos
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/admin")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 bg-jiohighlight/10 text-white hover:bg-jiohighlight/20"
-                >
-                  <ShieldCheck className="h-5 w-5" /> Admin
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/contact")}
-                  className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
-                >
-                  <PhoneCall className="h-5 w-5" /> Contact Us
-                </button>
+          <div className="w-4/5 max-w-[300px] h-full bg-gradient-to-b from-black to-gray-900 text-white">
+            <div className="flex justify-between items-center p-5 border-b border-gray-800">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-white">Live India</span>
+                <span className="text-2xl font-bold text-jiohighlight">News</span>
               </div>
+              <Button variant="ghost" size="icon" className="text-white" onClick={toggleMenu}>
+                <X className="h-6 w-6" />
+              </Button>
             </div>
             
-            {/* Categories Section */}
-            <div className="p-5 border-b border-gray-800">
-              <h3 className="text-sm font-medium text-gray-400 mb-4 flex items-center gap-2">
-                <LayoutGrid className="h-4 w-4" /> SECTIONS
-              </h3>
-              <div className="space-y-0">
-                <button 
-                  onClick={() => handleNavigation("/categories/india")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <MapPin className="h-4 w-4" /> India
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/world")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Globe2 className="h-4 w-4" /> World
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/education")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <GraduationCap className="h-4 w-4" /> Education
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/web-stories")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Newspaper className="h-4 w-4" /> Web Stories
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/technology")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Monitor className="h-4 w-4" /> Technology
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/entertainment")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Music className="h-4 w-4" /> Entertainment
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/sports")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Dumbbell className="h-4 w-4" /> Sports
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/lifestyle")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Heart className="h-4 w-4" /> Lifestyle
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/health")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Stethoscope className="h-4 w-4" /> Health
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/business")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <Building2 className="h-4 w-4" /> Business
-                </button>
-                <button 
-                  onClick={() => handleNavigation("/categories/city")}
-                  className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
-                >
-                  <MapPin className="h-4 w-4" /> City
-                </button>
+            <div className="flex flex-col h-[calc(100%-80px)] overflow-y-auto">
+              {/* Main Navigation */}
+              <div className="p-5 border-b border-gray-800">
+                <div className="space-y-0">
+                  <button 
+                    onClick={() => handleNavigation("/")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
+                  >
+                    <Home className="h-5 w-5" /> Home
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/trending")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
+                  >
+                    <TrendingUp className="h-5 w-5" /> Trending
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/live-tv")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
+                  >
+                    <Tv className="h-5 w-5" /> Live TV
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/premium")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
+                  >
+                    <Crown className="h-5 w-5" /> 
+                    <span className="bg-gradient-to-r from-amber-500 to-yellow-300 bg-clip-text text-transparent font-semibold">Premium</span>
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/shorts")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
+                  >
+                    <Film className="h-5 w-5" /> Shorts Videos
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/admin")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 bg-jiohighlight/10 text-white hover:bg-jiohighlight/20"
+                  >
+                    <ShieldCheck className="h-5 w-5" /> Admin
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/contact")}
+                    className="w-full flex items-center gap-3 text-left py-3 border-b border-gray-800 text-white hover:text-jiohighlight"
+                  >
+                    <PhoneCall className="h-5 w-5" /> Contact Us
+                  </button>
+                </div>
+              </div>
+              
+              {/* Categories Section */}
+              <div className="p-5 border-b border-gray-800">
+                <h3 className="text-sm font-medium text-gray-400 mb-4 flex items-center gap-2">
+                  <LayoutGrid className="h-4 w-4" /> SECTIONS
+                </h3>
+                <div className="space-y-0">
+                  <button 
+                    onClick={() => handleNavigation("/categories/india")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <MapPin className="h-4 w-4" /> India
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/world")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Globe2 className="h-4 w-4" /> World
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/education")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <GraduationCap className="h-4 w-4" /> Education
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/web-stories")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Newspaper className="h-4 w-4" /> Web Stories
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/technology")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Monitor className="h-4 w-4" /> Technology
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/entertainment")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Music className="h-4 w-4" /> Entertainment
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/sports")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Dumbbell className="h-4 w-4" /> Sports
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/lifestyle")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Heart className="h-4 w-4" /> Lifestyle
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/health")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Stethoscope className="h-4 w-4" /> Health
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/business")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <Building2 className="h-4 w-4" /> Business
+                  </button>
+                  <button 
+                    onClick={() => handleNavigation("/categories/city")}
+                    className="w-full flex items-center gap-3 text-left py-2 border-b border-gray-700/50 text-white/90 hover:text-jiohighlight"
+                  >
+                    <MapPin className="h-4 w-4" /> City
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+          {/* Semi-transparent overlay to close the menu when clicking outside */}
+          <div 
+            className="absolute inset-0 bg-black/50 -z-10"
+            onClick={toggleMenu} 
+          />
         </div>
       )}
 
