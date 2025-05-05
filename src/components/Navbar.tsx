@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Menu, User, Tv, ShieldCheck, Film } from "lucide-react";
+import { Search, Menu, User, Tv, ShieldCheck, Film, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -196,73 +196,117 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile menu - Updated with wider width and better blur effect */}
+      {/* Mobile menu - Redesigned with darker theme */}
       <div className={cn(
-        "md:hidden bg-white absolute left-0 w-full max-w-[320px] h-screen transition-transform duration-300 ease-in-out z-50 shadow-lg",
+        "md:hidden fixed inset-0 bg-black text-white z-50 transition-transform duration-300 ease-in-out",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="p-6 space-y-5">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="text-2xl font-bold text-jioblue">Live India</span>
+        <div className="flex justify-between items-center p-5 border-b border-gray-800">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-white">Live India</span>
             <span className="text-2xl font-bold text-jiohighlight">News</span>
           </div>
+          <Button variant="ghost" size="icon" className="text-white" onClick={toggleMenu}>
+            <X className="h-6 w-6" />
+          </Button>
+        </div>
+        
+        <div className="flex flex-col h-[calc(100%-80px)] overflow-y-auto">
+          {/* EVENTS Section */}
+          <div className="p-5 border-b border-gray-800">
+            <h3 className="text-sm font-medium text-gray-400 mb-4">EVENTS</h3>
+            <div className="space-y-4">
+              <button 
+                onClick={() => handleNavigation("/categories/politics")}
+                className="w-full text-left py-3 border-b border-gray-800 text-white"
+              >
+                Parliament Sessions
+              </button>
+              <button 
+                onClick={() => handleNavigation("/categories/sports")}
+                className="w-full text-left py-3 border-b border-gray-800 text-white"
+              >
+                Champions Trophy
+              </button>
+              <button 
+                onClick={() => handleNavigation("/categories/politics")}
+                className="w-full text-left py-3 border-b border-gray-800 text-white"
+              >
+                Delhi Elections 2025
+              </button>
+              <button 
+                onClick={() => handleNavigation("/categories/business")}
+                className="w-full text-left py-3 border-b border-gray-800 text-white"
+              >
+                Budget 2025
+              </button>
+              <button 
+                onClick={() => handleNavigation("/categories/world")}
+                className="w-full text-left py-3 border-b border-gray-800 text-white"
+              >
+                US Elections 2024
+              </button>
+              <button 
+                onClick={() => handleNavigation("/categories/defence")}
+                className="w-full text-left py-3 border-b border-gray-800 text-white"
+              >
+                Defence Summit
+              </button>
+            </div>
+          </div>
           
-          <button 
-            onClick={() => handleNavigation("/")}
-            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
-          >
-            Home
-          </button>
-          <button 
-            onClick={() => handleNavigation("/trending")}
-            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
-          >
-            Trending
-          </button>
-          <button 
-            onClick={() => handleNavigation("/categories")}
-            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
-          >
-            Categories
-          </button>
-          <button 
-            onClick={() => handleNavigation("/live-tv")}
-            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
-          >
-            <Tv className="h-5 w-5" />
-            Live TV
-          </button>
-          <button 
-            onClick={() => handleNavigation("/premium")}
-            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md"
-          >
-            Premium
-          </button>
-          <button 
-            onClick={() => handleNavigation("/shorts")}
-            className="block w-full text-left px-4 py-3 text-jioblue hover:bg-gray-50 font-medium transition-colors rounded-md flex items-center gap-2"
-          >
-            <Film className="h-5 w-5" />
-            Shorts
-          </button>
-          
-          <button 
-            onClick={() => handleNavigation("/admin")}
-            className="block w-full text-left px-4 py-3 bg-jiohighlight text-white rounded-md flex items-center gap-2 shadow-sm"
-          >
-            <ShieldCheck className="h-5 w-5" />
-            Admin
-          </button>
+          {/* SECTIONS */}
+          <div className="p-5">
+            <h3 className="text-sm font-medium text-gray-400 mb-4">SECTIONS</h3>
+            <div className="space-y-0">
+              <button 
+                onClick={() => handleNavigation("/")}
+                className="w-full text-left py-4 bg-[#f15a24] text-white"
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => handleNavigation("/live-tv")}
+                className="w-full text-left py-4 border-b border-gray-800 text-white"
+              >
+                Live TV
+              </button>
+              <button 
+                onClick={() => handleNavigation("/trending")}
+                className="w-full text-left py-4 border-b border-gray-800 text-white"
+              >
+                Trending
+              </button>
+              <button 
+                onClick={() => handleNavigation("/shorts")}
+                className="w-full text-left py-4 border-b border-gray-800 text-white"
+              >
+                Shorts
+              </button>
+              <button 
+                onClick={() => handleNavigation("/premium")}
+                className="w-full text-left py-4 border-b border-gray-800 text-white"
+              >
+                Premium
+              </button>
+              <button 
+                onClick={() => handleNavigation("/categories")}
+                className="w-full text-left py-4 border-b border-gray-800 text-white"
+              >
+                Categories
+              </button>
+              <button 
+                onClick={() => handleNavigation("/admin")}
+                className="w-full text-left py-4 border-b border-gray-800 text-white"
+              >
+                Admin
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Add overlay when menu is open */}
-      {isMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden" 
-          onClick={toggleMenu}
-        />
-      )}
+      {/* Remove overlay when menu is open as we're using fullscreen menu */}
 
       {/* Search Command Dialog */}
       <CommandDialog open={open} onOpenChange={setOpen}>
