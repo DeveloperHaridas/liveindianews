@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, Menu, User, Tv, ShieldCheck, Film, X } from "lucide-react";
@@ -196,7 +195,7 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile menu - Redesigned with darker theme */}
+      {/* Mobile menu - Simplified to match the image */}
       <div className={cn(
         "md:hidden fixed inset-0 bg-black text-white z-50 transition-transform duration-300 ease-in-out",
         isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -212,10 +211,10 @@ export function Navbar() {
         </div>
         
         <div className="flex flex-col h-[calc(100%-80px)] overflow-y-auto">
-          {/* EVENTS Section */}
+          {/* EVENTS Section - Kept as per image */}
           <div className="p-5 border-b border-gray-800">
             <h3 className="text-sm font-medium text-gray-400 mb-4">EVENTS</h3>
-            <div className="space-y-4">
+            <div className="space-y-0">
               <button 
                 onClick={() => handleNavigation("/categories/politics")}
                 className="w-full text-left py-3 border-b border-gray-800 text-white"
@@ -255,58 +254,12 @@ export function Navbar() {
             </div>
           </div>
           
-          {/* SECTIONS */}
+          {/* SECTIONS - Kept as per image */}
           <div className="p-5">
             <h3 className="text-sm font-medium text-gray-400 mb-4">SECTIONS</h3>
-            <div className="space-y-0">
-              <button 
-                onClick={() => handleNavigation("/")}
-                className="w-full text-left py-4 bg-[#f15a24] text-white"
-              >
-                Home
-              </button>
-              <button 
-                onClick={() => handleNavigation("/live-tv")}
-                className="w-full text-left py-4 border-b border-gray-800 text-white"
-              >
-                Live TV
-              </button>
-              <button 
-                onClick={() => handleNavigation("/trending")}
-                className="w-full text-left py-4 border-b border-gray-800 text-white"
-              >
-                Trending
-              </button>
-              <button 
-                onClick={() => handleNavigation("/shorts")}
-                className="w-full text-left py-4 border-b border-gray-800 text-white"
-              >
-                Shorts
-              </button>
-              <button 
-                onClick={() => handleNavigation("/premium")}
-                className="w-full text-left py-4 border-b border-gray-800 text-white"
-              >
-                Premium
-              </button>
-              <button 
-                onClick={() => handleNavigation("/categories")}
-                className="w-full text-left py-4 border-b border-gray-800 text-white"
-              >
-                Categories
-              </button>
-              <button 
-                onClick={() => handleNavigation("/admin")}
-                className="w-full text-left py-4 border-b border-gray-800 text-white"
-              >
-                Admin
-              </button>
-            </div>
           </div>
         </div>
       </div>
-
-      {/* Remove overlay when menu is open as we're using fullscreen menu */}
 
       {/* Search Command Dialog */}
       <CommandDialog open={open} onOpenChange={setOpen}>
